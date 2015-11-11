@@ -21,6 +21,10 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="SYG-LC-dBJ">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <animations/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="mzX-Uo-uYt" appends="YES" id="k4h-MW-bvs"/>
+                                </connections>
                             </mapView>
                         </subviews>
                         <animations/>
@@ -39,11 +43,17 @@
                         </variation>
                     </view>
                     <connections>
+                        <outlet property="longPressOutlet" destination="mzX-Uo-uYt" id="EiQ-6v-J91"/>
                         <outlet property="mapView" destination="SYG-LC-dBJ" id="WT5-GA-LpU"/>
-                        <segue destination="YqP-Fq-kSz" kind="show" identifier="showPhotoAlbum" id="NOM-Hc-Wki"/>
+                        <segue destination="YqP-Fq-kSz" kind="show" identifier="showPhotoAlbum" id="3di-6g-Bor"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="mzX-Uo-uYt">
+                    <connections>
+                        <action selector="longPressPressed:" destination="BYZ-38-t0r" id="j2h-ke-UGu"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
         </scene>
         <!--Photo Album View Controller-->

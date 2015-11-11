@@ -20,6 +20,8 @@ class PhotoAlbumViewController: UIViewController {
     @IBOutlet weak var bottomBarButtonOutlet: UIToolbar!
     
     
+    
+    
     // MARK: Button presses
     
     @IBAction func bottomBarButtunPressed(sender: AnyObject) {
