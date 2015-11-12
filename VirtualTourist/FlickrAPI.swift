@@ -28,17 +28,20 @@ class FlickrAPI : NSObject, MKMapViewDelegate{
             data, response, error in
             
             guard (error == nil) else {
+                print("Connection error")
                 completionHandler(photoUrlArray: nil, errorString: "Connection error")
                 return
             }
             
             let parsedResult : [String: AnyObject]?
+            
             do {
                 parsedResult = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? [String : AnyObject]
                 
                 let photoDictionary = parsedResult!["photos"]!["photo"] as! NSArray
                 var photoUrlArray = [String]()
                 var x = 0
+                
                 for _ in photoDictionary {
                     let farm = parsedResult!["photos"]!["photo"]!![x]["farm"] as! NSNumber
                     let server = parsedResult!["photos"]!["photo"]!![x]["server"] as! String
@@ -47,10 +50,13 @@ class FlickrAPI : NSObject, MKMapViewDelegate{
                     x += 1
                     photoUrlArray.append(self.getPhotoURL(id, farm: farm, server: server, secret: secret))
                 }
+                
+                print("All Urls Downloaded")
                 completionHandler(photoUrlArray: photoUrlArray, errorString: nil)
                 
             } catch {
                 parsedResult = nil
+                print("Try again of contact our team")
                 completionHandler(photoUrlArray: nil, errorString: "Try again or contact our team")
             }
             

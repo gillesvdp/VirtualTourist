@@ -13,6 +13,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 
     // MARK: Variables
     let flickrApi = FlickrAPI()
+    let notificationCenter = NSNotificationCenter.defaultCenter()
     
     // MARK: IBOutlets
     @IBOutlet weak var mapView: MKMapView!
@@ -29,32 +30,45 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         pinAnnotation.title = "Title of annotation"
         
         
-        
         flickrApi.getPhotos(pinAnnotation,
             completionHandler: {(photoUrlArray, errorString) -> Void in
-                if let _ = errorString {
-                    print(errorString!)
-                } else {
-                    for url in photoUrlArray! {
-                        print(url)
+                
+                dispatch_async(dispatch_get_main_queue(), {
+                    
+                    if let _ = errorString {
+                        print(errorString!)
+                        
+                    } else {
+                        var count = 1
+                        for url in photoUrlArray! {
+                            if let imageData = NSData(contentsOfURL: NSURL(string: url)!) {
+                                let imageData = UIImage(data: imageData)
+                                DataBuffer.sharedInstance.imagesArray.append(imageData!)
+                                print("Downloading image \(count) / \(photoUrlArray!.count)")
+                                count += 1
+                            }
+                        }
+                        print("All images downloaded in dataBuffer")
+                        //self.sendDataNotification("imagesReceived")
+                        self.performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: nil)
                     }
-                }
+                })
         })
+        
         
         mapView.addAnnotation(pinAnnotation)
     }
     
     
+    private func sendDataNotification(notificationName: String) {
+        NSNotificationCenter.defaultCenter().postNotificationName(notificationName, object: nil)
+    }
+    
     
     // MARK: MapView Delegate
     
     func mapView(mapView: MKMapView, didAddAnnotationViews views: [MKAnnotationView]) {
-        // Load Flickr pictures
-        print("Pin was added")
-        
-        // Move to the next screen
-        // performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: nil)
-        
+        //performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: nil)
     }
     
     // MARK: General functions

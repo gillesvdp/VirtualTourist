@@ -18,7 +18,8 @@
 		9868FBFF1BF3F8B000710F68 /* PhotoAlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9868FBFE1BF3F8B000710F68 /* PhotoAlbumViewController.swift */; };
 		9868FC021BF3F8EF00710F68 /* ConstantStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9868FC011BF3F8EF00710F68 /* ConstantStrings.swift */; };
 		9868FC041BF3FBB800710F68 /* FlickrAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9868FC031BF3FBB800710F68 /* FlickrAPI.swift */; };
-		9868FC061BF3FBD600710F68 /* ParsingJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9868FC051BF3FBD600710F68 /* ParsingJSON.swift */; };
+		987F97DE1BF4AD9000776DAD /* DataBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987F97DD1BF4AD9000776DAD /* DataBuffer.swift */; };
+		987F97E01BF4B0B400776DAD /* CollectionViewCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987F97DF1BF4B0B400776DAD /* CollectionViewCellController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,7 +57,8 @@
 		9868FBFE1BF3F8B000710F68 /* PhotoAlbumViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoAlbumViewController.swift; sourceTree = "<group>"; };
 		9868FC011BF3F8EF00710F68 /* ConstantStrings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstantStrings.swift; sourceTree = "<group>"; };
 		9868FC031BF3FBB800710F68 /* FlickrAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlickrAPI.swift; sourceTree = "<group>"; };
-		9868FC051BF3FBD600710F68 /* ParsingJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParsingJSON.swift; sourceTree = "<group>"; };
+		987F97DD1BF4AD9000776DAD /* DataBuffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataBuffer.swift; sourceTree = "<group>"; };
+		987F97DF1BF4B0B400776DAD /* CollectionViewCellController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewCellController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 			children = (
 				9868FBCB1BF3F62A00710F68 /* AppDelegate.swift */,
 				9868FC011BF3F8EF00710F68 /* ConstantStrings.swift */,
+				987F97DD1BF4AD9000776DAD /* DataBuffer.swift */,
 				9868FBD21BF3F62A00710F68 /* VirtualTourist.xcdatamodeld */,
 				9868FBCF1BF3F62A00710F68 /* Main.storyboard */,
 				9868FC071BF3FBDD00710F68 /* Connectivity */,
@@ -143,6 +146,7 @@
 			children = (
 				9868FBCD1BF3F62A00710F68 /* MapViewController.swift */,
 				9868FBFE1BF3F8B000710F68 /* PhotoAlbumViewController.swift */,
+				987F97DF1BF4B0B400776DAD /* CollectionViewCellController.swift */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -151,7 +155,6 @@
 			isa = PBXGroup;
 			children = (
 				9868FC031BF3FBB800710F68 /* FlickrAPI.swift */,
-				9868FC051BF3FBD600710F68 /* ParsingJSON.swift */,
 			);
 			name = Connectivity;
 			sourceTree = "<group>";
@@ -290,10 +293,11 @@
 				9868FC021BF3F8EF00710F68 /* ConstantStrings.swift in Sources */,
 				9868FBCE1BF3F62A00710F68 /* MapViewController.swift in Sources */,
 				9868FBCC1BF3F62A00710F68 /* AppDelegate.swift in Sources */,
-				9868FC061BF3FBD600710F68 /* ParsingJSON.swift in Sources */,
 				9868FC041BF3FBB800710F68 /* FlickrAPI.swift in Sources */,
 				9868FBD41BF3F62A00710F68 /* VirtualTourist.xcdatamodeld in Sources */,
 				9868FBFF1BF3F8B000710F68 /* PhotoAlbumViewController.swift in Sources */,
+				987F97E01BF4B0B400776DAD /* CollectionViewCellController.swift in Sources */,
+				987F97DE1BF4AD9000776DAD /* DataBuffer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -520,6 +524,7 @@
 				9868FBF51BF3F62A00710F68 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9868FBF61BF3F62A00710F68 /* Build configuration list for PBXNativeTarget "VirtualTouristTests" */ = {
 			isa = XCConfigurationList;
@@ -528,6 +533,7 @@
 				9868FBF81BF3F62A00710F68 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9868FBF91BF3F62A00710F68 /* Build configuration list for PBXNativeTarget "VirtualTouristUITests" */ = {
 			isa = XCConfigurationList;
@@ -536,6 +542,7 @@
 				9868FBFB1BF3F62A00710F68 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

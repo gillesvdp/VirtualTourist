@@ -20,6 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // MARK: Instantiating singletons
         _ = ConstantStrings()
+        _ = DataBuffer()
         
         return true
     }
