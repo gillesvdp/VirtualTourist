@@ -15,6 +15,7 @@ class PhotoAlbumViewController: UICollectionViewController, MKMapViewDelegate {
     
     // MARK: IBOutlets
     
+    @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
    
         
     override func viewDidLoad() {
@@ -22,9 +23,10 @@ class PhotoAlbumViewController: UICollectionViewController, MKMapViewDelegate {
         print("I am loaded")
         
         let space: CGFloat = 3.0
-        let dimension = (self.view.frame.size.width - (2 * space)) / 3.0
-        //flowLayout.minimumInteritemSpacing = space
-        //flowLayout.itemSize = CGSizeMake(dimension, dimension * 2)
+        let dimension = (self.view.frame.size.width - (2 * space)) / 2.0
+        flowLayout.minimumInteritemSpacing = space
+        flowLayout.itemSize = CGSizeMake(dimension, dimension * 2)
+        flowLayout.scrollDirection = .Vertical
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "imagesReceived", name: "imagesReceived", object: nil)
     }
@@ -46,7 +48,10 @@ class PhotoAlbumViewController: UICollectionViewController, MKMapViewDelegate {
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
         
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) 
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CollectionViewCellController
+        
+        cell.imageView.image = DataBuffer.sharedInstance.imagesArray[indexPath.row]
+        
         //cell.label.text = texts[indexPath.row]
         //cell.backgroundColor = UIColor.redColor()
         print(DataBuffer.sharedInstance.imagesArray[indexPath.row])
