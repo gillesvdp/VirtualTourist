@@ -7,12 +7,13 @@
 //
 
 import UIKit
-import MapKit
+import CoreData
 
-class PhotoAlbumViewController: UICollectionViewController, MKMapViewDelegate {
+class PhotoAlbumViewController: UICollectionViewController {
 
     var  texts = ["1", "2", "3"]
     
+
     // MARK: IBOutlets
     
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
@@ -50,11 +51,43 @@ class PhotoAlbumViewController: UICollectionViewController, MKMapViewDelegate {
         
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CollectionViewCellController
         
-        cell.imageView.image = DataBuffer.sharedInstance.imagesArray[indexPath.row]
+        
+        cell.imageView.image = retrieveImages(indexPath.row)
+        
+        
+        //cell.imageView.image = DataBuffer.sharedInstance.imagesArray[indexPath.row]
         
         //cell.label.text = texts[indexPath.row]
         //cell.backgroundColor = UIColor.redColor()
-        print(DataBuffer.sharedInstance.imagesArray[indexPath.row])
+        //print(DataBuffer.sharedInstance.imagesArray[indexPath.row])
         return cell
     }
+    
+    func retrieveImages(variable: Int) -> UIImage {
+        var finalResult = UIImage()
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context: NSManagedObjectContext = appDel.managedObjectContext
+        
+        let request = NSFetchRequest(entityName: "Photo")
+        request.returnsObjectsAsFaults = false
+        
+        do {
+            let results = try context.executeFetchRequest(request)
+            
+            if results.count > 0 {
+                let image = results[variable].valueForKey("photoData") as! UIImage
+                finalResult = image
+            }
+        } catch {
+            print("error 2")
+        }
+        return finalResult
+
+    }
 }
+
+
+
+
+
+

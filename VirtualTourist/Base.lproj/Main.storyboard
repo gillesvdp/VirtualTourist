@@ -45,7 +45,7 @@
                     <connections>
                         <outlet property="longPressOutlet" destination="mzX-Uo-uYt" id="EiQ-6v-J91"/>
                         <outlet property="mapView" destination="SYG-LC-dBJ" id="WT5-GA-LpU"/>
-                        <segue destination="9eh-M0-G7z" kind="showDetail" identifier="showPhotoAlbum" id="sfh-9U-u6I"/>
+                        <segue destination="9eh-M0-G7z" kind="show" identifier="showPhotoAlbum" id="sfh-9U-u6I"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -103,6 +103,7 @@
                             <outlet property="delegate" destination="9eh-M0-G7z" id="7hy-gi-i9P"/>
                         </connections>
                     </collectionView>
+                    <navigationItem key="navigationItem" id="9w8-1d-gBp"/>
                     <connections>
                         <outlet property="flowLayout" destination="MlH-qn-aGj" id="ARw-3p-1d4"/>
                     </connections>

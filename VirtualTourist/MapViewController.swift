@@ -8,12 +8,16 @@
 
 import UIKit
 import MapKit
+import CoreData
 
 class MapViewController: UIViewController, MKMapViewDelegate {
 
     // MARK: Variables
     let flickrApi = FlickrAPI()
     let notificationCenter = NSNotificationCenter.defaultCenter()
+    
+    
+
     
     // MARK: IBOutlets
     @IBOutlet weak var mapView: MKMapView!
@@ -29,7 +33,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
             let pinAnnotation = MKPointAnnotation()
             pinAnnotation.coordinate = newCoordinates
-            pinAnnotation.title = "Title of annotation"
             
             
             flickrApi.getPhotos(pinAnnotation,
@@ -44,9 +47,27 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                             var count = 1
                             for url in photoUrlArray! {
                                 if let imageData = NSData(contentsOfURL: NSURL(string: url)!) {
+                                    
+                                    
                                     let imageData = UIImage(data: imageData)
                                     DataBuffer.sharedInstance.imagesArray.append(imageData!)
-                                    print("Downloading image \(count) / \(photoUrlArray!.count)")
+                                    
+                                    
+                                    
+                                    let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                                    let context: NSManagedObjectContext = appDel.managedObjectContext
+                                    
+                                    let imageInCoreData = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
+                                    
+                                    imageInCoreData.setValue(imageData, forKey: "photoData")
+                                    
+                                    do {
+                                        try context.save()
+                                    } catch {
+                                        print("Error with context")
+                                    }
+                                    
+                                    print("Downloaded image \(count) / \(photoUrlArray!.count)")
                                     count += 1
                                 }
                             }
@@ -56,11 +77,63 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                         }
                     })
             })
+
             
+            saveNewAnnotation(pinAnnotation)
             
             mapView.addAnnotation(pinAnnotation)
             
         }
+    }
+    
+    func saveNewAnnotation(pinAnnotation: MKAnnotation) {
+        
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context: NSManagedObjectContext = appDel.managedObjectContext
+        
+        let pinInCoreData = NSEntityDescription.insertNewObjectForEntityForName("Pin", inManagedObjectContext: context)
+        
+        pinInCoreData.setValue(pinAnnotation.coordinate.longitude, forKey: "longitude")
+        pinInCoreData.setValue(pinAnnotation.coordinate.latitude, forKey: "latitude")
+        
+        do {
+            try context.save()
+        } catch {
+            print("Error with context")
+        }
+    }
+    
+    func loadAnnotations() {
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context: NSManagedObjectContext = appDel.managedObjectContext
+        
+        let request = NSFetchRequest(entityName: "Pin")
+        request.returnsObjectsAsFaults = false
+        
+        do {
+            let results = try context.executeFetchRequest(request)
+            if results.count > 0 {
+                
+                for pin in results {
+                    print(pin)
+                    let lat = pin.valueForKey("latitude") as! Double
+                    let long = pin.valueForKey("longitude") as! Double
+                    
+                    let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
+                    let annotation = MKPointAnnotation()
+                    annotation.coordinate = coordinate
+                    mapView.addAnnotation(annotation)
+                    
+                }
+            }
+            
+            
+            
+        } catch {
+            "error"
+        }
+        
+        
     }
     
     private func sendDataNotification(notificationName: String) {
@@ -87,6 +160,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         mapView.delegate = self
+        loadAnnotations()
+        
+        
         
     }
 
