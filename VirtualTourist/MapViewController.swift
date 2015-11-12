@@ -11,21 +11,36 @@ import MapKit
 
 class MapViewController: UIViewController, MKMapViewDelegate {
 
-    // MARK: IBOutlets
+    // MARK: Variables
+    let flickrApi = FlickrAPI()
     
+    // MARK: IBOutlets
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet var longPressOutlet: UILongPressGestureRecognizer!
     
-    
     // MARK: Actions
-    
     @IBAction func longPressPressed(sender: AnyObject) {
+        longPressOutlet.enabled = false
         longPressOutlet.conformsToProtocol(MKMapViewDelegate)
         let touchPoint = longPressOutlet.locationInView(mapView)
         let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
         let pinAnnotation = MKPointAnnotation()
         pinAnnotation.coordinate = newCoordinates
         pinAnnotation.title = "Title of annotation"
+        
+        
+        
+        flickrApi.getPhotos(pinAnnotation,
+            completionHandler: {(photoUrlArray, errorString) -> Void in
+                if let _ = errorString {
+                    print(errorString!)
+                } else {
+                    for url in photoUrlArray! {
+                        print(url)
+                    }
+                }
+        })
+        
         mapView.addAnnotation(pinAnnotation)
     }
     
@@ -35,11 +50,12 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     func mapView(mapView: MKMapView, didAddAnnotationViews views: [MKAnnotationView]) {
         // Load Flickr pictures
+        print("Pin was added")
         
         // Move to the next screen
         // performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: nil)
+        
     }
-    
     
     // MARK: General functions
     

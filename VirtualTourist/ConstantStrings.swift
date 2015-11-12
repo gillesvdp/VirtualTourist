@@ -13,10 +13,10 @@ class ConstantStrings {
     static var sharedInsance = ConstantStrings()
     
     // FlickrAPI
-    let flickrUrl = "flickrUrl"
     let flickrApiKey = "bac3739624ae24f96dc1242f6be2b676"
     let flickrApiSecret = "5a0b10934fa565e7"
-    let requestDetails = "flickr.photos.geo.photosForLocation"
+    let flickrUrl = "https://api.flickr.com/services/rest/?method=flickr.photos.search"
+    let flickrRequestDetails = "/flickr.photos.geo.photosForLocation"
     /***
      
      api_key (Required)

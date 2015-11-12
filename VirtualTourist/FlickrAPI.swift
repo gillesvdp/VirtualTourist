@@ -11,34 +11,71 @@ import MapKit
 
 class FlickrAPI : NSObject, MKMapViewDelegate{
     
-    func getPhotosUsingCompletionHandler(pin: MKAnnotation,
-        completionHandler: (errorString: String?) -> Void) {
+    func getPhotos(pin: MKAnnotation,
+        completionHandler: (photoUrlArray: [String]?, errorString: String?) -> Void) {
             
         let latitude = pin.coordinate.latitude
         let longitude = pin.coordinate.longitude
-        let flickrSearchURL = "\(ConstantStrings.flickrUrl)&api_key=\(ConstantStrings.flickrApiKey)"
-        let request = NSMutableURLRequest(URL: NSURL(string: flickrSearchURL)!)
+        let bbox = createBoundingBoxString(latitude, longitude: longitude)
+            
+        let flickrSearchUrl = "https://api.flickr.com/services/rest/?&method=flickr.photos.search&api_key=\(ConstantStrings.sharedInsance.flickrApiKey)&bbox=\(bbox)&format=json&nojsoncallback=1"
+            
+        let request = NSMutableURLRequest(URL: NSURL(string: flickrSearchUrl)!)
+            
+        let session = NSURLSession.sharedSession()
+            
         let task = session.dataTaskWithRequest(request) {
             data, response, error in
             
-            if let _ = error {
-                completionHandler(errorString: "Check your network")
-                
-            } else {
-                var error: NSError?
-                let result = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments, error: &error) as! NSDictionary?
-                if let result = result {
-                    if let dictResult = result["photos"] as! NSDictionary? {
-                        if let totalPages = dictResult["pages"] as? Int {
-                            let pageLimit = min(totalPages, 40)
-                            let randomPage = Int(arc4random_uniform(UInt32(pageLimit))) + 1
-                            self.getPhotosWithPageUsingCompletionHandler(pin, pageNumber: randomPage, completionHandler: completionHandler)
-                        }
-                    }
-                }
-                completionHandler(success: true, errorString: nil)
+            guard (error == nil) else {
+                completionHandler(photoUrlArray: nil, errorString: "Connection error")
+                return
             }
+            
+            let parsedResult : [String: AnyObject]?
+            do {
+                parsedResult = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? [String : AnyObject]
+                
+                let photoDictionary = parsedResult!["photos"]!["photo"] as! NSArray
+                var photoUrlArray = [String]()
+                var x = 0
+                for _ in photoDictionary {
+                    let farm = parsedResult!["photos"]!["photo"]!![x]["farm"] as! NSNumber
+                    let server = parsedResult!["photos"]!["photo"]!![x]["server"] as! String
+                    let id = parsedResult!["photos"]!["photo"]!![x]["id"] as! String
+                    let secret = parsedResult!["photos"]!["photo"]!![x]["secret"] as! String
+                    x += 1
+                    photoUrlArray.append(self.getPhotoURL(id, farm: farm, server: server, secret: secret))
+                }
+                completionHandler(photoUrlArray: photoUrlArray, errorString: nil)
+                
+            } catch {
+                parsedResult = nil
+                completionHandler(photoUrlArray: nil, errorString: "Try again or contact our team")
+            }
+            
+           
         }
         task.resume()
     }
+    
+    func createBoundingBoxString(latitude: Double, longitude: Double) -> String {
+        let bounding_box_half_width = 0.2
+        let bounding_box_half_height = 0.2
+        let lat_min = -90.0
+        let lat_max = 90.0
+        let lon_min = -180.0
+        let lon_max = 180.0
+        let bottom_left_lon = max(longitude - bounding_box_half_width, lon_min)
+        let bottom_left_lat = max(latitude - bounding_box_half_height, lat_min)
+        let top_right_lon = min(longitude + bounding_box_half_width, lon_max)
+        let top_right_lat = min(latitude + bounding_box_half_height, lat_max)
+        return "\(bottom_left_lon),\(bottom_left_lat),\(top_right_lon),\(top_right_lat)"
+    }
+    
+    
+    func getPhotoURL(id: String, farm: NSNumber, server: String, secret: String) -> String {
+        return "https://farm\(farm).staticflickr.com/\(server)/\(id)_\(secret).jpg"
+    }
+    
 }

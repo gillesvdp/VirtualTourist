@@ -150,8 +150,8 @@
 		9868FC071BF3FBDD00710F68 /* Connectivity */ = {
 			isa = PBXGroup;
 			children = (
-				9868FC051BF3FBD600710F68 /* ParsingJSON.swift */,
 				9868FC031BF3FBB800710F68 /* FlickrAPI.swift */,
+				9868FC051BF3FBD600710F68 /* ParsingJSON.swift */,
 			);
 			name = Connectivity;
 			sourceTree = "<group>";
