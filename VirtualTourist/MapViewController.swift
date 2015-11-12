@@ -20,45 +20,48 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     @IBOutlet var longPressOutlet: UILongPressGestureRecognizer!
     
     // MARK: Actions
-    @IBAction func longPressPressed(sender: AnyObject) {
-        longPressOutlet.enabled = false
-        longPressOutlet.conformsToProtocol(MKMapViewDelegate)
-        let touchPoint = longPressOutlet.locationInView(mapView)
-        let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
-        let pinAnnotation = MKPointAnnotation()
-        pinAnnotation.coordinate = newCoordinates
-        pinAnnotation.title = "Title of annotation"
-        
-        
-        flickrApi.getPhotos(pinAnnotation,
-            completionHandler: {(photoUrlArray, errorString) -> Void in
-                
-                dispatch_async(dispatch_get_main_queue(), {
-                    
-                    if let _ = errorString {
-                        print(errorString!)
-                        
-                    } else {
-                        var count = 1
-                        for url in photoUrlArray! {
-                            if let imageData = NSData(contentsOfURL: NSURL(string: url)!) {
-                                let imageData = UIImage(data: imageData)
-                                DataBuffer.sharedInstance.imagesArray.append(imageData!)
-                                print("Downloading image \(count) / \(photoUrlArray!.count)")
-                                count += 1
-                            }
-                        }
-                        print("All images downloaded in dataBuffer")
-                        //self.sendDataNotification("imagesReceived")
-                        self.performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: nil)
-                    }
-                })
-        })
-        
-        
-        mapView.addAnnotation(pinAnnotation)
-    }
     
+    @IBAction func longPressPressed(sender: UILongPressGestureRecognizer) {
+        if sender.state == UIGestureRecognizerState.Began {
+            longPressOutlet.enabled = false
+            longPressOutlet.conformsToProtocol(MKMapViewDelegate)
+            let touchPoint = longPressOutlet.locationInView(mapView)
+            let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
+            let pinAnnotation = MKPointAnnotation()
+            pinAnnotation.coordinate = newCoordinates
+            pinAnnotation.title = "Title of annotation"
+            
+            
+            flickrApi.getPhotos(pinAnnotation,
+                completionHandler: {(photoUrlArray, errorString) -> Void in
+                    
+                    dispatch_async(dispatch_get_main_queue(), {
+                        
+                        if let _ = errorString {
+                            print(errorString!)
+                            
+                        } else {
+                            var count = 1
+                            for url in photoUrlArray! {
+                                if let imageData = NSData(contentsOfURL: NSURL(string: url)!) {
+                                    let imageData = UIImage(data: imageData)
+                                    DataBuffer.sharedInstance.imagesArray.append(imageData!)
+                                    print("Downloading image \(count) / \(photoUrlArray!.count)")
+                                    count += 1
+                                }
+                            }
+                            print("All images downloaded in dataBuffer")
+                            //self.sendDataNotification("imagesReceived")
+                            self.performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: nil)
+                        }
+                    })
+            })
+            
+            
+            mapView.addAnnotation(pinAnnotation)
+            
+        }
+    }
     
     private func sendDataNotification(notificationName: String) {
         NSNotificationCenter.defaultCenter().postNotificationName(notificationName, object: nil)
