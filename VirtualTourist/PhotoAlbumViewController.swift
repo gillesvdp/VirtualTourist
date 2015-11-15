@@ -11,60 +11,28 @@ import CoreData
 
 class PhotoAlbumViewController: UICollectionViewController {
 
-    var  texts = ["1", "2", "3"]
     
-
     // MARK: IBOutlets
-    
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
    
-        
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("I am loaded")
-        
+        /*
         let space: CGFloat = 3.0
         let dimension = (self.view.frame.size.width - (2 * space)) / 2.0
         flowLayout.minimumInteritemSpacing = space
         flowLayout.itemSize = CGSizeMake(dimension, dimension * 2)
         flowLayout.scrollDirection = .Vertical
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "imagesReceived", name: "imagesReceived", object: nil)
-    }
-
-    func imagesReceived() {
-        collectionView!.reloadData()
+        */
     }
    
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        print("numberOfSectionsInCollectionView")
         return 1
     }
     
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print("numberOfItemsInSection")
-        return DataBuffer.sharedInstance.imagesArray.count
-    }
-    
-    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
-        
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CollectionViewCellController
-        
-        
-        cell.imageView.image = retrieveImages(indexPath.row)
-        
-        
-        //cell.imageView.image = DataBuffer.sharedInstance.imagesArray[indexPath.row]
-        
-        //cell.label.text = texts[indexPath.row]
-        //cell.backgroundColor = UIColor.redColor()
-        //print(DataBuffer.sharedInstance.imagesArray[indexPath.row])
-        return cell
-    }
-    
-    func retrieveImages(variable: Int) -> UIImage {
-        var finalResult = UIImage()
+        var solution = Int()
         let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let context: NSManagedObjectContext = appDel.managedObjectContext
         
@@ -73,15 +41,41 @@ class PhotoAlbumViewController: UICollectionViewController {
         
         do {
             let results = try context.executeFetchRequest(request)
-            
+            solution = results.count
+        } catch {
+            print("error accessing hard core data")
+        }
+        return solution
+    }
+    
+    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CollectionViewCellController
+        cell.imageView.image = retrieveImage(indexPath.row)
+        return cell
+    }
+    
+    func retrieveImage(variable: Int) -> UIImage {
+        var retrievedImage = UIImage()
+        
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context: NSManagedObjectContext = appDel.managedObjectContext
+        
+        let request = NSFetchRequest(entityName: "Photo")
+        request.returnsObjectsAsFaults = false
+        
+        do {
+            let results = try context.executeFetchRequest(request)
             if results.count > 0 {
-                let image = results[variable].valueForKey("photoData") as! UIImage
-                finalResult = image
+                let photoLocalUrl = results[variable].valueForKey("photoLocalUrl") as! String
+                if let image = NSKeyedUnarchiver.unarchiveObjectWithFile(photoLocalUrl) as? NSData {
+                    let imageToLoad = UIImage(data: image)
+                    retrievedImage = imageToLoad!
+                }
             }
         } catch {
-            print("error 2")
+            print("error: no images in the table")
         }
-        return finalResult
+        return retrievedImage
 
     }
 }
