@@ -50,8 +50,6 @@ class FlickrAPI : NSObject, MKMapViewDelegate{
                     x += 1
                     photoUrlArray.append(self.getPhotoURL(id, farm: farm, server: server, secret: secret))
                 }
-                
-                print("All Urls Downloaded")
                 completionHandler(photoUrlArray: photoUrlArray, errorString: nil)
                 
             } catch {
