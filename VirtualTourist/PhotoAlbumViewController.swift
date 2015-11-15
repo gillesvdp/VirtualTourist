@@ -12,11 +12,13 @@ import CoreData
 class PhotoAlbumViewController: UICollectionViewController {
 
     
+    
     // MARK: IBOutlets
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         /*
         let space: CGFloat = 3.0
         let dimension = (self.view.frame.size.width - (2 * space)) / 2.0
@@ -25,6 +27,15 @@ class PhotoAlbumViewController: UICollectionViewController {
         flowLayout.scrollDirection = .Vertical
         */
     }
+    
+    lazy var fetchedResultsController: NSFetchedResultsController = {
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context: NSManagedObjectContext = appDel.managedObjectContext
+        let fetchRequest = NSFetchRequest(entityName: "Event")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "timestamp", ascending: false)]
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        return fetchedResultsController
+    } ()
    
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
@@ -32,9 +43,9 @@ class PhotoAlbumViewController: UICollectionViewController {
     
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        var solution = Int()
         let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let context: NSManagedObjectContext = appDel.managedObjectContext
+        var solution = Int()
         
         let request = NSFetchRequest(entityName: "Photo")
         request.returnsObjectsAsFaults = false
