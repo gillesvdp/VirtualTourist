@@ -38,6 +38,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                             print(errorString!)
                             
                         } else {
+                            var count = 1
                             for url in photoUrlArray! {
                             
                                 let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
@@ -58,6 +59,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                                 
                                 NSKeyedArchiver.archiveRootObject(imageJpg!, toFile: photoLocalUrl)
                                 imageInCoreData.setValue(photoLocalUrl, forKey: "photoLocalUrl")
+                                print(count)
+                                count += 1
+                                
                             }
                             self.performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: nil)
                         }

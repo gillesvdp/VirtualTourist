@@ -9,8 +9,11 @@
 import UIKit
 import CoreData
 
-class PhotoAlbumViewController: UICollectionViewController {
+class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsControllerDelegate {
 
+    
+    var managedObjectContext: NSManagedObjectContext?
+    
     
     
     // MARK: IBOutlets
@@ -18,79 +21,86 @@ class PhotoAlbumViewController: UICollectionViewController {
    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        /*
-        let space: CGFloat = 3.0
-        let dimension = (self.view.frame.size.width - (2 * space)) / 2.0
-        flowLayout.minimumInteritemSpacing = space
-        flowLayout.itemSize = CGSizeMake(dimension, dimension * 2)
-        flowLayout.scrollDirection = .Vertical
-        */
     }
-    
-    lazy var fetchedResultsController: NSFetchedResultsController = {
-        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let context: NSManagedObjectContext = appDel.managedObjectContext
-        let fetchRequest = NSFetchRequest(entityName: "Event")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "timestamp", ascending: false)]
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-        return fetchedResultsController
-    } ()
    
-    override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        return 1
-    }
     
-    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
-        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let context: NSManagedObjectContext = appDel.managedObjectContext
-        var solution = Int()
-        
-        let request = NSFetchRequest(entityName: "Photo")
-        request.returnsObjectsAsFaults = false
-        
-        do {
-            let results = try context.executeFetchRequest(request)
-            solution = results.count
-        } catch {
-            print("error accessing hard core data")
-        }
-        return solution
-    }
-    
+    // ask the `NSFetchedResultsController` for the section
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CollectionViewCellController
-        cell.imageView.image = retrieveImage(indexPath.row)
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as UICollectionViewCell
+        self.configureCell(cell, atIndexPath: indexPath)
         return cell
     }
+
     
-    func retrieveImage(variable: Int) -> UIImage {
-        var retrievedImage = UIImage()
-        
-        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let context: NSManagedObjectContext = appDel.managedObjectContext
-        
-        let request = NSFetchRequest(entityName: "Photo")
-        request.returnsObjectsAsFaults = false
-        
-        do {
-            let results = try context.executeFetchRequest(request)
-            if results.count > 0 {
-                let photoLocalUrl = results[variable].valueForKey("photoLocalUrl") as! String
-                if let image = NSKeyedUnarchiver.unarchiveObjectWithFile(photoLocalUrl) as? NSData {
-                    let imageToLoad = UIImage(data: image)
-                    retrievedImage = imageToLoad!
-                }
-            }
-        } catch {
-            print("error: no images in the table")
-        }
-        return retrievedImage
-
+    /* helper method to configure a `UITableViewCell`
+    ask `NSFetchedResultsController` for the model */
+    func configureCell(cell: UITableViewCell,
+        atIndexPath indexPath: NSIndexPath) {
+            let item = self.fetchedResultsController.objectAtIndexPath(indexPath) as Item
+            cell.textLabel.text = item.name
     }
+    
+    func controllerWillChangeContent(controller: NSFetchedResultsController) {
+        self.tableView.beginUpdates()
+    }
+    
+    func controller(controller: NSFetchedResultsController,
+        didChangeObject object: AnyObject,
+        atIndexPath indexPath: NSIndexPath,
+        forChangeType type: NSFetchedResultsChangeType,
+        newIndexPath: NSIndexPath) {
+            switch type {
+            case .Insert:
+                self.tableView.insertRowsAtIndexPaths([newIndexPath], withRowAnimation: .Fade)
+            case .Update:
+                let cell = self.tableView.cellForRowAtIndexPath(indexPath)
+                self.configureCell(cell!, atIndexPath: indexPath)
+                self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            case .Move:
+                self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+                self.tableView.insertRowsAtIndexPaths([newIndexPath], withRowAnimation: .Fade)
+            case .Delete:
+                self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            default:
+                return
+            }
+    }
+    
+    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        self.tableView.endUpdates()
+    }
+    
+        
+        var fetchedResultsController: NSFetchedResultsController {
+            // return if already initialized
+            if self._fetchedResultsController != nil {
+                return self._fetchedResultsController!
+            }
+            let managedObjectContext = self.managedObjectContext!
+            
+            let entity = NSEntityDescription.entityForName("Photo", inManagedObjectContext: managedObjectContext)
+            let sort = NSSortDescriptor(key: "photoWebUrl", ascending: true)
+            let req = NSFetchRequest()
+            req.entity = entity
+            req.sortDescriptors = [sort]
+            
+            /* NSFetchedResultsController initialization
+            a `nil` `sectionNameKeyPath` generates a single section */
+            let aFetchedResultsController = NSFetchedResultsController(fetchRequest: req, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+            aFetchedResultsController.delegate = self
+            self._fetchedResultsController = aFetchedResultsController
+            
+            // perform initial model fetch
+            var e: NSError?
+            if !self._fetchedResultsController!.performFetch(&e) {
+                println("fetch error: \(e!.localizedDescription)")
+                abort();
+            }
+            
+            return self._fetchedResultsController!
+        }
+        var _fetchedResultsController: NSFetchedResultsController?
 }
-
 
 
 
