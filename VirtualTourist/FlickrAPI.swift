@@ -28,7 +28,6 @@ class FlickrAPI : NSObject, MKMapViewDelegate{
             data, response, error in
             
             guard (error == nil) else {
-                print("Connection error")
                 completionHandler(photoUrlArray: nil, errorString: "Connection error")
                 return
             }

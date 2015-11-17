@@ -59,7 +59,13 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                                 
                                 NSKeyedArchiver.archiveRootObject(imageJpg!, toFile: photoLocalUrl)
                                 imageInCoreData.setValue(photoLocalUrl, forKey: "photoLocalUrl")
-                                print(count)
+                                do {
+                                    try context.save()
+                                    print("saved!")
+                                } catch {
+                                    print(error)
+                                }
+                                print("\(count) / \(photoUrlArray!.count)" )
                                 count += 1
                                 
                             }
