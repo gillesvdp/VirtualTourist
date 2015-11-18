@@ -65,11 +65,22 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         mapView.delegate = self
         
-        for annotation in CoreDataStackManager.sharedInstance.loadAnnotations() {
-            mapView.addAnnotation(annotation)
+        let arrayOfExistingPins = CoreDataStackManager.sharedInstance.loadAnnotations()
+        print("There are \(arrayOfExistingPins.count) annotations")
+        
+        if arrayOfExistingPins.count > 0 {
+            for pin in arrayOfExistingPins {
+                let lat = pin.latitude as! Double
+                let long = pin.longitude as! Double
+                
+                let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
+                let annotation = MKPointAnnotation()
+                annotation.coordinate = coordinate
+                
+                mapView.addAnnotation(annotation)
+            }
         }
     }
 }

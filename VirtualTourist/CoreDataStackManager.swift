@@ -34,39 +34,16 @@ class CoreDataStackManager {
     }
     
     //// Functions for MapView
-    /*
-    func saveNewAnnotation(pinAnnotation: MKAnnotation) {
-        
-        let pinInCoreData = NSEntityDescription.insertNewObjectForEntityForName("Pin", inManagedObjectContext: sharedContext)
-        
-        pinInCoreData.setValue(pinAnnotation.coordinate.longitude, forKey: "longitude")
-        pinInCoreData.setValue(pinAnnotation.coordinate.latitude, forKey: "latitude")
-        
-        saveContext()
-    }
-    */
     
-    func loadAnnotations() -> [MKPointAnnotation] {
-        var funcReturn = [MKPointAnnotation]()
+    func loadAnnotations() -> [Pin] {
+        var funcReturn = [Pin]()
         
         let request = NSFetchRequest(entityName: "Pin")
         request.returnsObjectsAsFaults = false
         
         do {
             let results = try sharedContext.executeFetchRequest(request) as! [Pin]
-            if results.count > 0 {
-                
-                for pin in results {
-                    
-                    let lat = pin.latitude as! Double
-                    let long = pin.longitude as! Double
-                    
-                    let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
-                    let annotation = MKPointAnnotation()
-                    annotation.coordinate = coordinate
-                    funcReturn.append(annotation)
-                }
-            }
+            funcReturn = results
         } catch {
             print("error")
         }
@@ -88,7 +65,6 @@ class CoreDataStackManager {
             let imageJpg = UIImageJPEGRepresentation(image!, 1.0)
             
             NSKeyedArchiver.archiveRootObject(imageJpg!, toFile: photoLocalUrl)
-            //imageInCoreData.setValue(photoLocalUrl, forKey: "photoLocalUrl")
             
             let newPhoto = Photo(localUrl: photoLocalUrl, webUrl: photoWebUrl, context: self.sharedContext)
             photoArray.append(newPhoto)
@@ -99,6 +75,7 @@ class CoreDataStackManager {
         
         let photoSet = NSSet(array: photoArray)
         _ = Pin(lat: pinAnnotation.coordinate.longitude, lon: pinAnnotation.coordinate.latitude, photoSet: photoSet, context: sharedContext)
+        print("pin was saved")
         
         saveContext()
     }

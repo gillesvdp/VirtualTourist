@@ -18,7 +18,7 @@ class FlickrAPI : NSObject, MKMapViewDelegate{
         let longitude = pin.coordinate.longitude
         let bbox = createBoundingBoxString(latitude, longitude: longitude)
             
-        let flickrSearchUrl = "https://api.flickr.com/services/rest/?&method=flickr.photos.search&api_key=\(ConstantStrings.sharedInsance.flickrApiKey)&bbox=\(bbox)&format=json&nojsoncallback=1"
+        let flickrSearchUrl = "\(ConstantStrings.sharedInsance.flickrUrl)&api_key=\(ConstantStrings.sharedInsance.flickrApiKey)&bbox=\(bbox)&format=json&nojsoncallback=1"
             
         let request = NSMutableURLRequest(URL: NSURL(string: flickrSearchUrl)!)
             

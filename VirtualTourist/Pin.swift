@@ -9,11 +9,7 @@
 import Foundation
 import CoreData
 
-// @objc(Pin)
-
 class Pin: NSManagedObject {
-
-// Insert code here to add functionality to your managed object subclass
     
     struct Keys {
         static let latitude = 0.0 as Double
@@ -21,8 +17,8 @@ class Pin: NSManagedObject {
         static let photos = NSSet()
     }
     
-    override convenience init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
-        self.init(entity: entity, insertIntoManagedObjectContext: context)
+    override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
+        super.init(entity: entity, insertIntoManagedObjectContext: context)
     }
     
     init(lat: Double , lon: Double, photoSet: NSSet, context: NSManagedObjectContext) {
