@@ -57,12 +57,10 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                                 
                                 NSKeyedArchiver.archiveRootObject(imageJpg!, toFile: photoLocalUrl)
                                 imageInCoreData.setValue(photoLocalUrl, forKey: "photoLocalUrl")
-                                do {
-                                    try self.context.save()
-                                    print("saved!")
-                                } catch {
-                                    print(error)
-                                }
+                                
+                                
+                                CoreDataStackManager.sharedInstance.saveContext()
+                                
                                 print("\(count) / \(photoUrlArray!.count)" )
                                 count += 1
                             }
@@ -82,11 +80,8 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         pinInCoreData.setValue(pinAnnotation.coordinate.longitude, forKey: "longitude")
         pinInCoreData.setValue(pinAnnotation.coordinate.latitude, forKey: "latitude")
         
-        do {
-            try context.save()
-        } catch {
-            print("Error with context")
-        }
+        CoreDataStackManager.sharedInstance.saveContext()
+        
     }
     
     func loadAnnotations() {

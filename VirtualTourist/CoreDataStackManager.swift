@@ -19,6 +19,16 @@ class CoreDataStackManager {
         return appDel.managedObjectContext
     }
     
-    
-    
+    func saveContext() -> Bool {
+        var funcReturn = Bool()
+        
+        do {
+            try sharedContext.save()
+            funcReturn = true
+        } catch {
+            funcReturn = false
+            print(error)
+        }
+        return funcReturn
+    }
 }
