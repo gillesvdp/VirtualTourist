@@ -37,14 +37,11 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                         if let _ = errorString {
                             print(errorString!)
                         } else {
-                            for url in photoUrlArray! {
-                                CoreDataStackManager.sharedInstance.downloadAndSavePhoto(url)
-                            }
-                            self.performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: nil)
+                            CoreDataStackManager.sharedInstance.downloadAndSavePhotos(pinAnnotation, photoUrlArray: photoUrlArray!)
                         }
                     })
             })
-            CoreDataStackManager.sharedInstance.saveNewAnnotation(pinAnnotation)
+            //CoreDataStackManager.sharedInstance.saveNewAnnotation(pinAnnotation)
             mapView.addAnnotation(pinAnnotation)
         }
     }
@@ -52,6 +49,10 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     // MARK: MapView Delegate
     func mapView(mapView: MKMapView, didAddAnnotationViews views: [MKAnnotationView]) {
         //performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: nil)
+    }
+    
+    func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
+        self.performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: nil)
     }
     
     // MARK: General functions

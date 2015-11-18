@@ -1,8 +1,8 @@
 //
-//  Photo+CoreDataProperties.swift
+//  Pin+CoreDataProperties.swift
 //  VirtualTourist
 //
-//  Created by Gilles on 11/16/15.
+//  Created by Gilles on 11/18/15.
 //  Copyright © 2015 gillesvdp. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
@@ -12,11 +12,10 @@
 import Foundation
 import CoreData
 
+extension Pin {
 
-
-extension Photo {
-
-    @NSManaged var photoLocalUrl: String?
-    @NSManaged var photoWebUrl: String?
+    @NSManaged var latitude: NSNumber?
+    @NSManaged var longitude: NSNumber?
+    @NSManaged var photos: NSSet?
     
 }

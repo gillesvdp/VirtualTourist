@@ -34,6 +34,7 @@ class CoreDataStackManager {
     }
     
     //// Functions for MapView
+    /*
     func saveNewAnnotation(pinAnnotation: MKAnnotation) {
         
         let pinInCoreData = NSEntityDescription.insertNewObjectForEntityForName("Pin", inManagedObjectContext: sharedContext)
@@ -43,6 +44,7 @@ class CoreDataStackManager {
         
         saveContext()
     }
+    */
     
     func loadAnnotations() -> [MKPointAnnotation] {
         var funcReturn = [MKPointAnnotation]()
@@ -51,13 +53,13 @@ class CoreDataStackManager {
         request.returnsObjectsAsFaults = false
         
         do {
-            let results = try sharedContext.executeFetchRequest(request)
+            let results = try sharedContext.executeFetchRequest(request) as! [Pin]
             if results.count > 0 {
                 
                 for pin in results {
                     
-                    let lat = pin.valueForKey("latitude") as! Double
-                    let long = pin.valueForKey("longitude") as! Double
+                    let lat = pin.latitude as! Double
+                    let long = pin.longitude as! Double
                     
                     let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
                     let annotation = MKPointAnnotation()
@@ -71,22 +73,32 @@ class CoreDataStackManager {
         return funcReturn
     }
     
-    func downloadAndSavePhoto(url: String) {
-        let imageInCoreData = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: sharedContext)
+    func downloadAndSavePhotos(pinAnnotation: MKAnnotation, photoUrlArray: [String]) {
         
-        // Saving WebUrl
-        imageInCoreData.setValue(url, forKey: "photoWebUrl")
+        var photoArray = [Photo]()
         
-        // Saving file locally & localUrl of the file
-        let image = UIImage(data: NSData(contentsOfURL: NSURL(string: url)!)!)
-        let fileManager = NSFileManager.defaultManager()
-        let docsDir = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first! as NSURL
-        let unique = NSDate.timeIntervalSinceReferenceDate()
-        let photoLocalUrl = docsDir.URLByAppendingPathComponent("\(unique).jpg").path!
-        let imageJpg = UIImageJPEGRepresentation(image!, 1.0)
+        var count = 1
+        for photoWebUrl in photoUrlArray {
+            
+            let image = UIImage(data: NSData(contentsOfURL: NSURL(string: photoWebUrl)!)!)
+            let fileManager = NSFileManager.defaultManager()
+            let docsDir = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first! as NSURL
+            let unique = NSDate.timeIntervalSinceReferenceDate()
+            let photoLocalUrl = docsDir.URLByAppendingPathComponent("\(unique).jpg").path!
+            let imageJpg = UIImageJPEGRepresentation(image!, 1.0)
+            
+            NSKeyedArchiver.archiveRootObject(imageJpg!, toFile: photoLocalUrl)
+            //imageInCoreData.setValue(photoLocalUrl, forKey: "photoLocalUrl")
+            
+            let newPhoto = Photo(localUrl: photoLocalUrl, webUrl: photoWebUrl, context: self.sharedContext)
+            photoArray.append(newPhoto)
+            
+            print("\(count) / \(photoUrlArray.count)")
+            count += 1
+        }
         
-        NSKeyedArchiver.archiveRootObject(imageJpg!, toFile: photoLocalUrl)
-        imageInCoreData.setValue(photoLocalUrl, forKey: "photoLocalUrl")
+        let photoSet = NSSet(array: photoArray)
+        _ = Pin(lat: pinAnnotation.coordinate.longitude, lon: pinAnnotation.coordinate.latitude, photoSet: photoSet, context: sharedContext)
         
         saveContext()
     }
@@ -99,7 +111,7 @@ class CoreDataStackManager {
         request.returnsObjectsAsFaults = false
         
         do {
-            let results = try sharedContext.executeFetchRequest(request)
+            let results = try sharedContext.executeFetchRequest(request) as! [Photo]
             funcReturn = results.count
         } catch {
             print("error accessing hard core data")
@@ -114,8 +126,8 @@ class CoreDataStackManager {
         request.returnsObjectsAsFaults = false
         
         do {
-            let results = try sharedContext.executeFetchRequest(request)
-            let photoLocalUrl = results[id].valueForKey("photoLocalUrl") as! String
+            let results = try sharedContext.executeFetchRequest(request) as! [Photo]
+            let photoLocalUrl = results[id].photoLocalUrl as String!
             let imageData = UIImage(data: (NSKeyedUnarchiver.unarchiveObjectWithFile(photoLocalUrl) as! NSData))
             funcReturn = imageData!
         } catch {
