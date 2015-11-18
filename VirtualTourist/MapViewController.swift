@@ -17,7 +17,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     let flickrApi = FlickrAPI()
     let context = CoreDataStackManager.sharedInstance.sharedContext
     
-    
     // MARK: IBOutlets
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet var longPressOutlet: UILongPressGestureRecognizer!
