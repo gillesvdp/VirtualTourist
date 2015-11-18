@@ -22,6 +22,7 @@
 		987F97E01BF4B0B400776DAD /* CollectionViewCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987F97DF1BF4B0B400776DAD /* CollectionViewCellController.swift */; };
 		987F98AF1BFA350A00776DAD /* Photo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987F98AD1BFA350A00776DAD /* Photo+CoreDataProperties.swift */; };
 		987F98B01BFA350A00776DAD /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987F98AE1BFA350A00776DAD /* Photo.swift */; };
+		988737281BFC9AB600ED09FB /* CoreDataStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988737271BFC9AB600ED09FB /* CoreDataStackManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		987F97DF1BF4B0B400776DAD /* CollectionViewCellController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewCellController.swift; sourceTree = "<group>"; };
 		987F98AD1BFA350A00776DAD /* Photo+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Photo+CoreDataProperties.swift"; path = "VirtualTourist/Photo+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		987F98AE1BFA350A00776DAD /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Photo.swift; path = VirtualTourist/Photo.swift; sourceTree = "<group>"; };
+		988737271BFC9AB600ED09FB /* CoreDataStackManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStackManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,8 +118,6 @@
 			isa = PBXGroup;
 			children = (
 				9868FBCB1BF3F62A00710F68 /* AppDelegate.swift */,
-				9868FC011BF3F8EF00710F68 /* ConstantStrings.swift */,
-				987F97DD1BF4AD9000776DAD /* DataBuffer.swift */,
 				9868FBD21BF3F62A00710F68 /* VirtualTourist.xcdatamodeld */,
 				9868FBCF1BF3F62A00710F68 /* Main.storyboard */,
 				9868FC071BF3FBDD00710F68 /* Connectivity */,
@@ -161,6 +161,9 @@
 			isa = PBXGroup;
 			children = (
 				9868FC031BF3FBB800710F68 /* FlickrAPI.swift */,
+				988737271BFC9AB600ED09FB /* CoreDataStackManager.swift */,
+				9868FC011BF3F8EF00710F68 /* ConstantStrings.swift */,
+				987F97DD1BF4AD9000776DAD /* DataBuffer.swift */,
 			);
 			name = Connectivity;
 			sourceTree = "<group>";
@@ -298,6 +301,7 @@
 			files = (
 				9868FC021BF3F8EF00710F68 /* ConstantStrings.swift in Sources */,
 				9868FBCE1BF3F62A00710F68 /* MapViewController.swift in Sources */,
+				988737281BFC9AB600ED09FB /* CoreDataStackManager.swift in Sources */,
 				9868FBCC1BF3F62A00710F68 /* AppDelegate.swift in Sources */,
 				9868FC041BF3FBB800710F68 /* FlickrAPI.swift in Sources */,
 				987F98B01BFA350A00776DAD /* Photo.swift in Sources */,

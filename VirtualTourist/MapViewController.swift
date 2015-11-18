@@ -15,6 +15,8 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 
     // MARK: Variables
     let flickrApi = FlickrAPI()
+    let context = CoreDataStackManager.sharedInstance.sharedContext
+    
     
     // MARK: IBOutlets
     @IBOutlet weak var mapView: MKMapView!
@@ -41,10 +43,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                             var count = 1
                             for url in photoUrlArray! {
                             
-                                let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                                let context: NSManagedObjectContext = appDel.managedObjectContext
-                                                        
-                                let imageInCoreData = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: context)
+                                let imageInCoreData = NSEntityDescription.insertNewObjectForEntityForName("Photo", inManagedObjectContext: self.context)
                                 
                                 // Saving WebUrl
                                 imageInCoreData.setValue(url, forKey: "photoWebUrl")
@@ -60,14 +59,13 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                                 NSKeyedArchiver.archiveRootObject(imageJpg!, toFile: photoLocalUrl)
                                 imageInCoreData.setValue(photoLocalUrl, forKey: "photoLocalUrl")
                                 do {
-                                    try context.save()
+                                    try self.context.save()
                                     print("saved!")
                                 } catch {
                                     print(error)
                                 }
                                 print("\(count) / \(photoUrlArray!.count)" )
                                 count += 1
-                                
                             }
                             self.performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: nil)
                         }
@@ -78,12 +76,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
     }
     
-    
-    
     func saveNewAnnotation(pinAnnotation: MKAnnotation) {
-        
-        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let context: NSManagedObjectContext = appDel.managedObjectContext
         
         let pinInCoreData = NSEntityDescription.insertNewObjectForEntityForName("Pin", inManagedObjectContext: context)
         
@@ -98,8 +91,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
     
     func loadAnnotations() {
-        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let context: NSManagedObjectContext = appDel.managedObjectContext
         
         let request = NSFetchRequest(entityName: "Pin")
         request.returnsObjectsAsFaults = false
@@ -123,8 +114,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             "error"
         }
     }
-    
-    
     
     // MARK: MapView Delegate
     func mapView(mapView: MKMapView, didAddAnnotationViews views: [MKAnnotationView]) {

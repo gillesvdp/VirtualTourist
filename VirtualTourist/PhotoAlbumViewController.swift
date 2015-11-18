@@ -11,7 +11,8 @@ import CoreData
 
 class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsControllerDelegate {
 
-    var managedObjectContext: NSManagedObjectContext?
+    let context = CoreDataStackManager.sharedInstance.sharedContext
+    
     
     // MARK: IBOutlets
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
@@ -23,10 +24,6 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CollectionViewCellController
-        
-        
-        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let context: NSManagedObjectContext = appDel.managedObjectContext
         
         let request = NSFetchRequest(entityName: "Photo")
         request.returnsObjectsAsFaults = false
@@ -44,8 +41,6 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let context: NSManagedObjectContext = appDel.managedObjectContext
         var solution = Int()
         
         let request = NSFetchRequest(entityName: "Photo")
