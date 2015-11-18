@@ -52,7 +52,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
-        self.performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: nil)
+        //self.performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: nil)
     }
     
     // MARK: General functions
@@ -70,6 +70,8 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         let arrayOfExistingPins = CoreDataStackManager.sharedInstance.loadAnnotations()
         print("There are \(arrayOfExistingPins.count) annotations")
         
+        // Transforming Pins into MKAnnotations.
+        var arrayOfAnnotations = [MKAnnotation]()
         if arrayOfExistingPins.count > 0 {
             for pin in arrayOfExistingPins {
                 let lat = pin.latitude as! Double
@@ -78,10 +80,12 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                 let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
                 let annotation = MKPointAnnotation()
                 annotation.coordinate = coordinate
-                
-                mapView.addAnnotation(annotation)
+                arrayOfAnnotations.append(annotation)
             }
         }
+        mapView.showAnnotations(arrayOfAnnotations, animated: true)
+        //mapView.addAnnotations(arrayOfAnnotations)
+        
     }
 }
 

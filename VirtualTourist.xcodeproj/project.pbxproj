@@ -24,6 +24,8 @@
 		988737281BFC9AB600ED09FB /* CoreDataStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988737271BFC9AB600ED09FB /* CoreDataStackManager.swift */; };
 		988737671BFCDE9A00ED09FB /* Pin+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988737651BFCDE9A00ED09FB /* Pin+CoreDataProperties.swift */; };
 		988737681BFCDE9A00ED09FB /* Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988737661BFCDE9A00ED09FB /* Pin.swift */; };
+		9887376B1BFD375300ED09FB /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9887376A1BFD375300ED09FB /* MapKit.framework */; };
+		9887376D1BFD375A00ED09FB /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9887376C1BFD375A00ED09FB /* CoreData.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +69,8 @@
 		988737271BFC9AB600ED09FB /* CoreDataStackManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStackManager.swift; sourceTree = "<group>"; };
 		988737651BFCDE9A00ED09FB /* Pin+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Pin+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		988737661BFCDE9A00ED09FB /* Pin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pin.swift; sourceTree = "<group>"; };
+		9887376A1BFD375300ED09FB /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		9887376C1BFD375A00ED09FB /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +78,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9887376D1BFD375A00ED09FB /* CoreData.framework in Frameworks */,
+				9887376B1BFD375300ED09FB /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,6 +103,8 @@
 		9868FBBF1BF3F62A00710F68 = {
 			isa = PBXGroup;
 			children = (
+				9887376C1BFD375A00ED09FB /* CoreData.framework */,
+				9887376A1BFD375300ED09FB /* MapKit.framework */,
 				9868FBCA1BF3F62A00710F68 /* VirtualTourist */,
 				9868FBE21BF3F62A00710F68 /* VirtualTouristTests */,
 				9868FBED1BF3F62A00710F68 /* VirtualTouristUITests */,

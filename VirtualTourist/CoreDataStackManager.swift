@@ -74,8 +74,7 @@ class CoreDataStackManager {
         }
         
         let photoSet = NSSet(array: photoArray)
-        _ = Pin(lat: pinAnnotation.coordinate.longitude, lon: pinAnnotation.coordinate.latitude, photoSet: photoSet, context: sharedContext)
-        print("pin was saved")
+        _ = Pin(lon: pinAnnotation.coordinate.longitude, lat: pinAnnotation.coordinate.latitude, photoSet: photoSet, context: sharedContext)
         
         saveContext()
     }
