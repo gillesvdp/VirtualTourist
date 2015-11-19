@@ -7,15 +7,14 @@
 //
 
 import Foundation
-import MapKit
 
-class FlickrAPI : NSObject, MKMapViewDelegate{
+class FlickrAPI : NSObject {
     
-    func getPhotos(pin: MKAnnotation,
+    func getPhotos(pinLatitude: Double, pinLongitude: Double,
         completionHandler: (photoUrlArray: [String]?, errorString: String?) -> Void) {
             
-        let latitude = pin.coordinate.latitude
-        let longitude = pin.coordinate.longitude
+        let latitude = pinLatitude
+        let longitude = pinLongitude
         let bbox = createBoundingBoxString(latitude, longitude: longitude)
             
         let flickrSearchUrl = "\(ConstantStrings.sharedInsance.flickrUrl)&api_key=\(ConstantStrings.sharedInsance.flickrApiKey)&bbox=\(bbox)&format=json&nojsoncallback=1"

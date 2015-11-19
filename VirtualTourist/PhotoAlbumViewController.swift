@@ -11,6 +11,7 @@ import CoreData
 
 class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsControllerDelegate {
     
+    let flickrApi = FlickrAPI()
     var selectedPinLatitude = Double()
     var selectedPinLongitude = Double()
     
@@ -19,7 +20,6 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
    
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        //return CoreDataStackManager.sharedInstance.countCells()
         return selectedPin.photos!.count
     }
     
@@ -31,6 +31,7 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
     
     func checkWhichPin() {
         let arrayOfExistingPins = CoreDataStackManager.sharedInstance.fetchPins() as [Pin]
+        print(arrayOfExistingPins.count)
         for pin in arrayOfExistingPins {
             if pin.latitude == selectedPinLatitude && pin.longitude == selectedPinLongitude {
                 selectedPin = pin
@@ -38,8 +39,26 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         }
     }
     
+    func downloadPhotos() {
+        flickrApi.getPhotos(selectedPin.latitude as! Double, pinLongitude: selectedPin.longitude as! Double,
+            completionHandler: {(photoUrlArray, errorString) -> Void in
+                dispatch_async(dispatch_get_main_queue(), {
+                    if let _ = errorString {
+                        print(errorString!)
+                    } else {
+                        CoreDataStackManager.sharedInstance.downloadAndSavePhotos(self.selectedPin, photoUrlArray: photoUrlArray!)
+                        self.collectionView?.reloadData()
+                    }
+                })
+        })
+        
+    }
+    
     override func viewDidLoad() {
         checkWhichPin()
+        if selectedPin.photos?.count == 0 {
+            downloadPhotos()
+        }
     }
 }
 

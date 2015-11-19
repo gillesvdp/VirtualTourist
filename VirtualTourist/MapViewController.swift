@@ -27,27 +27,17 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             longPressOutlet.conformsToProtocol(MKMapViewDelegate)
             let touchPoint = longPressOutlet.locationInView(mapView)
             let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
+            
             let pinAnnotation = MKPointAnnotation()
             pinAnnotation.coordinate = newCoordinates
+            CoreDataStackManager.sharedInstance.saveNewPin(pinAnnotation.coordinate.longitude, newPinLatitude: pinAnnotation.coordinate.latitude)
             mapView.addAnnotation(pinAnnotation)
-            
-            flickrApi.getPhotos(pinAnnotation,
-                completionHandler: {(photoUrlArray, errorString) -> Void in
-                    
-                    dispatch_async(dispatch_get_main_queue(), {
-                        if let _ = errorString {
-                            print(errorString!)
-                        } else {
-                            CoreDataStackManager.sharedInstance.downloadAndSavePhotos(pinAnnotation, photoUrlArray: photoUrlArray!)
-                        }
-                    })
-            })
         }
     }
     
     // MARK: MapView Delegate
     func mapView(mapView: MKMapView, didAddAnnotationViews views: [MKAnnotationView]) {
-        //performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: nil)
+        performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: views.last)
     }
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {

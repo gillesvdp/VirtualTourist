@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 import CoreData
-import MapKit
 
 class CoreDataStackManager {
     
@@ -51,9 +50,12 @@ class CoreDataStackManager {
         return funcReturn
     }
     
-    func downloadAndSavePhotos(pinAnnotation: MKAnnotation, photoUrlArray: [String]) {
-        
-        var photoArray = [Photo]()
+    func saveNewPin(newPinLongitude: Double, newPinLatitude: Double) {
+        _ = Pin(lon: newPinLongitude, lat: newPinLatitude, photoSet: [], context: sharedContext)
+        saveContext()
+    }
+    
+    func downloadAndSavePhotos(selectedPin: Pin, photoUrlArray: [String]) {
         
         var count = 1
         for photoWebUrl in photoUrlArray {
@@ -68,15 +70,12 @@ class CoreDataStackManager {
             NSKeyedArchiver.archiveRootObject(imageJpg!, toFile: photoLocalUrl)
             
             let newPhoto = Photo(localUrl: photoLocalUrl, webUrl: photoWebUrl, context: self.sharedContext)
-            photoArray.append(newPhoto)
+            //photoArray.append(newPhoto)
+            newPhoto.pin = selectedPin
             
             print("\(count) / \(photoUrlArray.count)")
             count += 1
         }
-        
-        let photoNSOrdredSet = NSOrderedSet(array: photoArray)
-        _ = Pin(lon: pinAnnotation.coordinate.longitude, lat: pinAnnotation.coordinate.latitude, photoSet: photoNSOrdredSet, context: sharedContext)
-        
         saveContext()
     }
     
