@@ -28,9 +28,13 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let photo = self.fetchedResultsController.objectAtIndexPath(indexPath) as! Photo
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CollectionViewCellController
-        //cell.imageView.image = CoreDataStackManager.sharedInstance.imageForCell(selectedPin, id: indexPath.row)
-        //cell.imageView.image = CoreDataStackManager.sharedInstance.imageForCell2(photo.photoLocalUrl!)
-        cell.imageView.image = UIImage(data: NSKeyedUnarchiver.unarchiveObjectWithFile(photo.photoLocalUrl!) as! NSData)
+        
+        if photo.photoLocalUrl == "" {
+            cell.imageView.image = UIImage(named: "downloading")
+        } else {
+            cell.imageView.image = UIImage(data: NSKeyedUnarchiver.unarchiveObjectWithFile(photo.photoLocalUrl!) as! NSData)
+        }
+        
         return cell
     }
     
@@ -133,7 +137,7 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         let fetchRequest = NSFetchRequest(entityName: "Photo")
         
         // Add a sort descriptor.
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "photoLocalUrl", ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "photoWebUrl", ascending: false)]
         fetchRequest.predicate = NSPredicate(format: "pin == %@", self.selectedPin);
         
         // Create the Fetched Results Controller

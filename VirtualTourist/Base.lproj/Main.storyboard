@@ -83,6 +83,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <animations/>
+                        <color key="backgroundColor" red="0.074257038533687592" green="0.38528931140899658" blue="0.7800937294960022" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="MlH-qn-aGj">
                             <size key="itemSize" width="151" height="121"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -97,8 +98,8 @@
                                     <rect key="frame" x="0.0" y="0.0" width="151" height="121"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yU0-tU-nta">
-                                            <rect key="frame" x="17" y="18" width="116" height="86"/>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="yU0-tU-nta">
+                                            <rect key="frame" x="8" y="8" width="135" height="105"/>
                                             <animations/>
                                         </imageView>
                                     </subviews>
@@ -106,6 +107,7 @@
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="yU0-tU-nta" firstAttribute="leading" secondItem="BST-5D-aKS" secondAttribute="leadingMargin" id="4oj-mW-Wif"/>
                                     <constraint firstItem="yU0-tU-nta" firstAttribute="top" secondItem="BST-5D-aKS" secondAttribute="topMargin" id="EFG-Eu-oG9"/>

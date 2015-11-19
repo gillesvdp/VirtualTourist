@@ -57,12 +57,38 @@ class CoreDataStackManager {
     
     func downloadAndSavePhotos(selectedPin: Pin, photoUrlArray: [String]) {
         
+        // Saving the photoWebUrl in CoreData
+        for webUrl in photoUrlArray {
+            let newPhoto = Photo(localUrl: "", webUrl: webUrl, context: self.sharedContext)
+            newPhoto.pin = selectedPin
+            self.saveContext()
+            print("saved the weburl")
+        }
+        
+        // Start downloading images
+        for photo in selectedPin.photos! {
+            // Downloading image
+            let photo = photo as! Photo
+            let image = UIImage(data: NSData(contentsOfURL: NSURL(string: photo.photoWebUrl!)!)!)
+            
+            // Storing the image locally
+            let fileManager = NSFileManager.defaultManager()
+            let docsDir = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first! as NSURL
+            let unique = NSDate.timeIntervalSinceReferenceDate()
+            let photoLocalUrl = docsDir.URLByAppendingPathComponent("\(unique).jpg").path!
+            let imageJpg = UIImageJPEGRepresentation(image!, 1.0)
+            NSKeyedArchiver.archiveRootObject(imageJpg!, toFile: photoLocalUrl)
+            
+            // Storing the image localUrl in CoreData
+            photo.photoLocalUrl = photoLocalUrl
+            self.saveContext()
+            print("saved the file and localurl")
+        }
+        
+        /*
         var count = 1
         for photoWebUrl in photoUrlArray {
             
-            //let qualityOfServiceClass = QOS_CLASS_USER_INITIATED
-            //let newQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-            //dispatch_async(newQueue, {
                 let image = UIImage(data: NSData(contentsOfURL: NSURL(string: photoWebUrl)!)!)
                 let fileManager = NSFileManager.defaultManager()
                 let docsDir = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first! as NSURL
@@ -78,8 +104,9 @@ class CoreDataStackManager {
                 print("\(count) / \(photoUrlArray.count)")
                 count += 1
                 self.saveContext()
-            //})
+
         }
+        */
     }
     
     //// Functions for PhotoAlbum
