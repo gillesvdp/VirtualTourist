@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VirtualTourist/MapViewController.swift"
-            timestampString = "469568806.819145"
+            timestampString = "469622856.304551"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
             landmarkName = "prepareForSegue(_:sender:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -32,6 +32,22 @@
             startingLineNumber = "33"
             endingLineNumber = "33"
             landmarkName = "getPhotos(_:completionHandler:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VirtualTourist/PhotoAlbumViewController.swift"
+            timestampString = "469627597.541799"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "34"
+            endingLineNumber = "34"
+            landmarkName = "checkWhichPin()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -55,11 +55,12 @@
                     </connections>
                 </pongPressGestureRecognizer>
             </objects>
+            <point key="canvasLocation" x="443" y="308"/>
         </scene>
         <!--Photo Album View Controller-->
         <scene sceneID="JIp-2z-jyP">
             <objects>
-                <collectionViewController id="9eh-M0-G7z" customClass="PhotoAlbumViewController" customModule="VirtualTourist" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController storyboardIdentifier="imageCollectionVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="9eh-M0-G7z" customClass="PhotoAlbumViewController" customModule="VirtualTourist" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="Ga1-4C-NhF">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

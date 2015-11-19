@@ -33,9 +33,10 @@ class CoreDataStackManager {
         return funcReturn
     }
     
+    
     //// Functions for MapView
     
-    func loadAnnotations() -> [Pin] {
+    func fetchPins() -> [Pin] {
         var funcReturn = [Pin]()
         
         let request = NSFetchRequest(entityName: "Pin")
@@ -73,42 +74,24 @@ class CoreDataStackManager {
             count += 1
         }
         
-        let photoSet = NSSet(array: photoArray)
-        _ = Pin(lon: pinAnnotation.coordinate.longitude, lat: pinAnnotation.coordinate.latitude, photoSet: photoSet, context: sharedContext)
+        let photoNSOrdredSet = NSOrderedSet(array: photoArray)
+        _ = Pin(lon: pinAnnotation.coordinate.longitude, lat: pinAnnotation.coordinate.latitude, photoSet: photoNSOrdredSet, context: sharedContext)
         
         saveContext()
     }
     
     //// Functions for PhotoAlbum
-    func countCells() -> Int {
-        var funcReturn = Int()
-        
-        let request = NSFetchRequest(entityName: "Photo")
-        request.returnsObjectsAsFaults = false
-        
-        do {
-            let results = try sharedContext.executeFetchRequest(request) as! [Photo]
-            funcReturn = results.count
-        } catch {
-            print("error accessing hard core data")
-        }
-        return funcReturn
-    }
-    
-    func imageForCell(id: Int) -> UIImage {
+    func imageForCell(selectedPin: Pin, id: Int) -> UIImage {
         var funcReturn = UIImage()
         
-        let request = NSFetchRequest(entityName: "Photo")
-        request.returnsObjectsAsFaults = false
-        
-        do {
-            let results = try sharedContext.executeFetchRequest(request) as! [Photo]
-            let photoLocalUrl = results[id].photoLocalUrl as String!
-            let imageData = UIImage(data: (NSKeyedUnarchiver.unarchiveObjectWithFile(photoLocalUrl) as! NSData))
-            funcReturn = imageData!
-        } catch {
-            print("error accessing hard core data")
+        var photoArray = [Photo]()
+        for photo in selectedPin.photos! {
+            photoArray.append(photo as! Photo)
         }
+        let photoLocalUrl = photoArray[id].photoLocalUrl! as String
+        let imageData = UIImage(data: (NSKeyedUnarchiver.unarchiveObjectWithFile(photoLocalUrl) as! NSData))
+        funcReturn = imageData!
+        
         return funcReturn
     }
 }

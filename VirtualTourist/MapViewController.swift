@@ -29,6 +29,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
             let pinAnnotation = MKPointAnnotation()
             pinAnnotation.coordinate = newCoordinates
+            mapView.addAnnotation(pinAnnotation)
             
             flickrApi.getPhotos(pinAnnotation,
                 completionHandler: {(photoUrlArray, errorString) -> Void in
@@ -41,8 +42,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                         }
                     })
             })
-            //CoreDataStackManager.sharedInstance.saveNewAnnotation(pinAnnotation)
-            mapView.addAnnotation(pinAnnotation)
         }
     }
     
@@ -52,14 +51,17 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
-        //self.performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: nil)
+        performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: view)
     }
     
     // MARK: General functions
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == ConstantStrings.sharedInsance.showPhotoAlbum {
-            // Send over the location tapped so the new map can load with this one in focus
-            
+            let destinationVC = segue.destinationViewController as! PhotoAlbumViewController
+            if let selectedPin = sender as? MKAnnotationView {
+                destinationVC.selectedPinLongitude = (selectedPin.annotation?.coordinate.longitude)!
+                destinationVC.selectedPinLatitude = (selectedPin.annotation?.coordinate.latitude)!
+            }
         }
     }
     
@@ -67,7 +69,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
         mapView.delegate = self
         
-        let arrayOfExistingPins = CoreDataStackManager.sharedInstance.loadAnnotations()
+        let arrayOfExistingPins = CoreDataStackManager.sharedInstance.fetchPins()
         print("There are \(arrayOfExistingPins.count) annotations")
         
         // Transforming Pins into MKAnnotations.
@@ -76,7 +78,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             for pin in arrayOfExistingPins {
                 let lat = pin.latitude as! Double
                 let long = pin.longitude as! Double
-                
                 let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
                 let annotation = MKPointAnnotation()
                 annotation.coordinate = coordinate
@@ -84,8 +85,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             }
         }
         mapView.showAnnotations(arrayOfAnnotations, animated: true)
-        //mapView.addAnnotations(arrayOfAnnotations)
-        
+        mapView.addAnnotations(arrayOfAnnotations)
     }
 }
 
