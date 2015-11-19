@@ -60,23 +60,26 @@ class CoreDataStackManager {
         var count = 1
         for photoWebUrl in photoUrlArray {
             
-            let image = UIImage(data: NSData(contentsOfURL: NSURL(string: photoWebUrl)!)!)
-            let fileManager = NSFileManager.defaultManager()
-            let docsDir = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first! as NSURL
-            let unique = NSDate.timeIntervalSinceReferenceDate()
-            let photoLocalUrl = docsDir.URLByAppendingPathComponent("\(unique).jpg").path!
-            let imageJpg = UIImageJPEGRepresentation(image!, 1.0)
-            
-            NSKeyedArchiver.archiveRootObject(imageJpg!, toFile: photoLocalUrl)
-            
-            let newPhoto = Photo(localUrl: photoLocalUrl, webUrl: photoWebUrl, context: self.sharedContext)
-            //photoArray.append(newPhoto)
-            newPhoto.pin = selectedPin
-            
-            print("\(count) / \(photoUrlArray.count)")
-            count += 1
+            //let qualityOfServiceClass = QOS_CLASS_USER_INITIATED
+            //let newQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+            //dispatch_async(newQueue, {
+                let image = UIImage(data: NSData(contentsOfURL: NSURL(string: photoWebUrl)!)!)
+                let fileManager = NSFileManager.defaultManager()
+                let docsDir = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first! as NSURL
+                let unique = NSDate.timeIntervalSinceReferenceDate()
+                let photoLocalUrl = docsDir.URLByAppendingPathComponent("\(unique).jpg").path!
+                let imageJpg = UIImageJPEGRepresentation(image!, 1.0)
+                
+                NSKeyedArchiver.archiveRootObject(imageJpg!, toFile: photoLocalUrl)
+                
+                let newPhoto = Photo(localUrl: photoLocalUrl, webUrl: photoWebUrl, context: self.sharedContext)
+                newPhoto.pin = selectedPin
+                
+                print("\(count) / \(photoUrlArray.count)")
+                count += 1
+                self.saveContext()
+            //})
         }
-        saveContext()
     }
     
     //// Functions for PhotoAlbum
@@ -88,6 +91,15 @@ class CoreDataStackManager {
             photoArray.append(photo as! Photo)
         }
         let photoLocalUrl = photoArray[id].photoLocalUrl! as String
+        print(photoLocalUrl)
+        let imageData = UIImage(data: (NSKeyedUnarchiver.unarchiveObjectWithFile(photoLocalUrl) as! NSData))
+        funcReturn = imageData!
+        
+        return funcReturn
+    }
+    func imageForCell2(photoLocalUrl: String) -> UIImage {
+        var funcReturn = UIImage()
+        
         print(photoLocalUrl)
         let imageData = UIImage(data: (NSKeyedUnarchiver.unarchiveObjectWithFile(photoLocalUrl) as! NSData))
         funcReturn = imageData!
