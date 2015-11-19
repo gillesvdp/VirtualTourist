@@ -88,6 +88,7 @@ class CoreDataStackManager {
             photoArray.append(photo as! Photo)
         }
         let photoLocalUrl = photoArray[id].photoLocalUrl! as String
+        print(photoLocalUrl)
         let imageData = UIImage(data: (NSKeyedUnarchiver.unarchiveObjectWithFile(photoLocalUrl) as! NSData))
         funcReturn = imageData!
         

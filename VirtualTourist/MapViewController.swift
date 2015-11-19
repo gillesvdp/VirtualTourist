@@ -77,5 +77,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         mapView.showAnnotations(arrayOfAnnotations, animated: true)
         mapView.addAnnotations(arrayOfAnnotations)
     }
+    
+    override func viewWillAppear(animated: Bool) {
+        longPressOutlet.enabled = true
+    }
 }
 
