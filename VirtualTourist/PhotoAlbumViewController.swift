@@ -37,16 +37,6 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         return cell
     }
     
-    func checkWhichPin() {
-        let arrayOfExistingPins = CoreDataStackManager.sharedInstance.fetchPins() as [Pin]
-        print(arrayOfExistingPins.count)
-        for pin in arrayOfExistingPins {
-            if pin.latitude == selectedPinLatitude && pin.longitude == selectedPinLongitude {
-                selectedPin = pin
-            }
-        }
-    }
-    
     func downloadPhotos() {
         flickrApi.getPhotos(selectedPin.latitude as! Double, pinLongitude: selectedPin.longitude as! Double,
             completionHandler: {(photoUrlArray, errorString) -> Void in
@@ -59,7 +49,6 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
     }
     
     override func viewDidLoad() {
-        checkWhichPin()
         if selectedPin.photos?.count == 0 {
             downloadPhotos()
         }
@@ -70,7 +59,36 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
             abort()
         }
         fetchedResultsController.delegate = self
+        collectionView!.allowsMultipleSelection = true
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Edit, target: self, action: "downloadNewSetOfPhotos")
     }
+    
+    func downloadNewSetOfPhotos() {
+        let alert = UIAlertController(title: "Warning", message: "Downloading new photos will delete the current set of photos associated with this Pin", preferredStyle: .Alert)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+        alert.addAction(cancelAction)
+        
+        let okAction = UIAlertAction(title: "OK, Download new photos", style: .Destructive, handler: {
+            UIAlertAction -> Void in
+            
+                self.deleteAllPhotos()
+                self.downloadPhotos()
+        })
+        
+        alert.addAction(okAction)
+        presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    func deleteAllPhotos() {
+        for photo in fetchedResultsController.fetchedObjects as! [Photo] {
+            sharedContext.deleteObject(photo)
+        }
+        CoreDataStackManager.sharedInstance.saveContext()
+        selectedIndexes = [NSIndexPath]()
+    }
+    
 
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
         insertedIndexPaths = [NSIndexPath]()

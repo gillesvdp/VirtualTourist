@@ -22,35 +22,59 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     // MARK: Actions
     @IBAction func longPressPressed(sender: UILongPressGestureRecognizer) {
-        if sender.state == UIGestureRecognizerState.Began {
-            longPressOutlet.enabled = false
-            longPressOutlet.conformsToProtocol(MKMapViewDelegate)
-            let touchPoint = longPressOutlet.locationInView(mapView)
-            let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
+        if ConstantStrings.sharedInstance.downloadingStatus == true {
+            let alert = UIAlertController(title: "Warning", message: "The app is still downloading pictures. Please wait until all pictures are downloaded before adding a new location to the map.", preferredStyle: .Alert)
             
-            let pinAnnotation = MKPointAnnotation()
-            pinAnnotation.coordinate = newCoordinates
-            CoreDataStackManager.sharedInstance.saveNewPin(pinAnnotation.coordinate.longitude, newPinLatitude: pinAnnotation.coordinate.latitude)
-            mapView.addAnnotation(pinAnnotation)
+            let cancelAction = UIAlertAction(title: "Ok", style: .Cancel, handler: nil)
+            alert.addAction(cancelAction)
+            
+            presentViewController(alert, animated: true, completion: nil)
+            
+        } else {
+            if sender.state == UIGestureRecognizerState.Began {
+                longPressOutlet.enabled = false
+                longPressOutlet.conformsToProtocol(MKMapViewDelegate)
+                let touchPoint = longPressOutlet.locationInView(mapView)
+                let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
+                
+                let pinAnnotation = MKPointAnnotation()
+                pinAnnotation.coordinate = newCoordinates
+                let newPin = CoreDataStackManager.sharedInstance.saveNewPin(pinAnnotation.coordinate.longitude, newPinLatitude: pinAnnotation.coordinate.latitude)
+                mapView.addAnnotation(pinAnnotation)
+                downloadPhotos(newPin)
+                ConstantStrings.sharedInstance.downloadingStatus = true
+            }
         }
     }
     
     // MARK: MapView Delegate
     func mapView(mapView: MKMapView, didAddAnnotationViews views: [MKAnnotationView]) {
-        performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: views.last)
+        performSegueWithIdentifier(ConstantStrings.sharedInstance.showImageCollection, sender: views.last)
     }
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
-        performSegueWithIdentifier(ConstantStrings.sharedInsance.showPhotoAlbum, sender: view)
+        performSegueWithIdentifier(ConstantStrings.sharedInstance.showImageCollection, sender: view)
     }
     
     // MARK: General functions
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == ConstantStrings.sharedInsance.showPhotoAlbum {
-            let destinationVC = segue.destinationViewController as! PhotoAlbumViewController
+        if segue.identifier == ConstantStrings.sharedInstance.showImageCollection {
+            let destinationVC = segue.destinationViewController as! ImagesViewController
             if let selectedPin = sender as? MKAnnotationView {
-                destinationVC.selectedPinLongitude = (selectedPin.annotation?.coordinate.longitude)!
-                destinationVC.selectedPinLatitude = (selectedPin.annotation?.coordinate.latitude)!
+                
+                // Define selectedPin
+                let selectedPinLongitude = (selectedPin.annotation?.coordinate.longitude)!
+                let selectedPinLatitude = (selectedPin.annotation?.coordinate.latitude)!
+                let arrayOfExistingPins = CoreDataStackManager.sharedInstance.fetchPins() as [Pin]
+                print(arrayOfExistingPins.count)
+                for pin in arrayOfExistingPins {
+                    if pin.latitude == selectedPinLatitude && pin.longitude == selectedPinLongitude {
+                        destinationVC.selectedPin = pin
+                    }
+                }
+                
+                // Inform of download status
+                destinationVC.downloadingPictures = ConstantStrings.sharedInstance.downloadingStatus
             }
         }
     }
@@ -81,5 +105,17 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     override func viewWillAppear(animated: Bool) {
         longPressOutlet.enabled = true
     }
+    
+    func downloadPhotos(selectedPin: Pin) {
+        flickrApi.getPhotos(selectedPin.latitude as! Double, pinLongitude: selectedPin.longitude as! Double,
+            completionHandler: {(photoUrlArray, errorString) -> Void in
+                guard errorString == nil else {
+                    print(errorString)
+                    return
+                }
+                CoreDataStackManager.sharedInstance.downloadAndSavePhotos(selectedPin, photoUrlArray: photoUrlArray!)
+        })
+    }
+    
 }
 

@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VirtualTourist/MapViewController.swift"
-            timestampString = "469636551.363788"
+            timestampString = "469841428.928095"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "48"
-            endingLineNumber = "48"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
             landmarkName = "prepareForSegue(_:sender:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -42,12 +42,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VirtualTourist/PhotoAlbumViewController.swift"
-            timestampString = "469807066.788575"
+            timestampString = "469817237.140701"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "41"
-            endingLineNumber = "41"
-            landmarkName = "checkWhichPin()"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
+            landmarkName = "controllerDidChangeContent(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -57,13 +57,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "VirtualTourist/PhotoAlbumViewController.swift"
-            timestampString = "469807066.788575"
+            filePath = "VirtualTourist/CoreDataStackManager.swift"
+            timestampString = "469841428.928095"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "108"
-            endingLineNumber = "108"
-            landmarkName = "controllerDidChangeContent(_:)"
+            startingLineNumber = "115"
+            endingLineNumber = "115"
+            landmarkName = "deletePhotosOfPin(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

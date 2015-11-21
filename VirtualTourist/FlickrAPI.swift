@@ -17,7 +17,7 @@ class FlickrAPI : NSObject {
         let longitude = pinLongitude
         let bbox = createBoundingBoxString(latitude, longitude: longitude)
             
-        let flickrSearchUrl = "\(ConstantStrings.sharedInsance.flickrUrl)&api_key=\(ConstantStrings.sharedInsance.flickrApiKey)&bbox=\(bbox)&format=json&nojsoncallback=1"
+        let flickrSearchUrl = "\(ConstantStrings.sharedInstance.flickrUrl)&api_key=\(ConstantStrings.sharedInstance.flickrApiKey)&bbox=\(bbox)&format=json&nojsoncallback=1"
             
         let request = NSMutableURLRequest(URL: NSURL(string: flickrSearchUrl)!)
             

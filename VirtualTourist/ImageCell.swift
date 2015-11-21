@@ -1,15 +1,16 @@
 //
-//  CollectionViewCellController.swift
+//  ImageCell.swift
 //  VirtualTourist
 //
-//  Created by Gilles on 11/12/15.
+//  Created by Gilles on 11/21/15.
 //  Copyright © 2015 gillesvdp. All rights reserved.
 //
 
 import UIKit
 
-class CollectionViewCellController: UICollectionViewCell {
+class ImageCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
+    
     
 }

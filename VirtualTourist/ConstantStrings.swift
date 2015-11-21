@@ -10,7 +10,7 @@ import Foundation
 
 class ConstantStrings {
     
-    static var sharedInsance = ConstantStrings()
+    static var sharedInstance = ConstantStrings()
     
     // FlickrAPI
     let flickrApiKey = "bac3739624ae24f96dc1242f6be2b676"
@@ -22,5 +22,10 @@ class ConstantStrings {
     let cell = "cell"
     
     // MARK: Segues
-    let showPhotoAlbum = "showPhotoAlbum"
+    let showImageCollection = "showImages"
+    
+    // MARK: Download Progress Information
+    var downloadingStatus = false
+    var imagesDownloaded = 0
+    var totalImagesToDownload = 0
 }
