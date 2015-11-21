@@ -79,16 +79,18 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
             self.navigationItem.rightBarButtonItem?.enabled = true
             self.collectionView.allowsSelection = true
             self.collectionView.allowsMultipleSelection = true
-            self.downloadingPictures = false
         })
         
         // Automatically download photos if no photos are associated with the Pin
-        if downloadingPictures == true {
+        if ConstantStrings.sharedInstance.downloadingStatus == true {
             self.bottomBtnOutlet.enabled = false
             self.bottomBtnOutlet.title = "Downloading photos"
             self.navigationItem.rightBarButtonItem?.enabled = false
         } else {
+            self.bottomBtnOutlet.enabled = false
             self.bottomBtnOutlet.title = "Select a photo to be deleted"
+            self.collectionView.allowsSelection = true
+            self.collectionView.allowsMultipleSelection = true
         }
     }
     

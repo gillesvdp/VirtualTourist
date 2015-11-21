@@ -72,9 +72,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                         destinationVC.selectedPin = pin
                     }
                 }
-                
-                // Inform of download status
-                destinationVC.downloadingPictures = ConstantStrings.sharedInstance.downloadingStatus
             }
         }
     }
