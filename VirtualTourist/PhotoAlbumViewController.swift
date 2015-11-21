@@ -20,7 +20,6 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
    
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        //return selectedPin.photos!.count
         let sectionInfo = self.fetchedResultsController.sections![section]
         return sectionInfo.numberOfObjects
     }
@@ -137,7 +136,7 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         let fetchRequest = NSFetchRequest(entityName: "Photo")
         
         // Add a sort descriptor.
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "photoWebUrl", ascending: false)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "photoUniqueId", ascending: false)]
         fetchRequest.predicate = NSPredicate(format: "pin == %@", self.selectedPin);
         
         // Create the Fetched Results Controller
@@ -150,10 +149,6 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         // Return the fetched results controller. It will be the value of the lazy variable
         return fetchedResultsController
     } ()
-    
-    
-    
-    
 }
 
 
