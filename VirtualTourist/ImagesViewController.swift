@@ -21,6 +21,9 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var bottomBtnOutlet: UIBarButtonItem!
     
+    
+    //// View Management
+    
     @IBAction func bottomBtnPressed(sender: AnyObject) {
         bottomBtnOutlet.enabled = false
         self.bottomBtnOutlet.title = "Select a photo to be deleted"
@@ -125,6 +128,9 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
         selectedIndexes = [NSIndexPath]()
     }
     
+    
+    //// NSFetchedResultsController
+    
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
         insertedIndexPaths = [NSIndexPath]()
         deletedIndexPaths = [NSIndexPath]()
@@ -177,7 +183,7 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
     var updatedIndexPaths: [NSIndexPath]!
     
     lazy var sharedContext: NSManagedObjectContext = {
-        CoreDataStackManager.sharedInstance.sharedContext
+        CoreDataStackManager.sharedInstance.sharedContext!
     }()
     
     // MARK: - Fetched Results Controller
@@ -201,6 +207,10 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
         return fetchedResultsController
     } ()
     
+    
+    
+    //// CollectionView Management
+    
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let sectionInfo = self.fetchedResultsController.sections![section]
         return sectionInfo.numberOfObjects
@@ -213,7 +223,13 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
         if photo.photoLocalUrl == "" {
             cell.imageView.image = UIImage(named: "downloading")
         } else {
-            cell.imageView.image = UIImage(data: NSData(contentsOfFile: photo.photoLocalUrl!)!)
+            if let completeLocalUrl = photo.completeLocalUrl() {
+                if let imageData = NSData(contentsOfFile: completeLocalUrl) {
+                    if let image = UIImage(data: imageData) {
+                        cell.imageView.image = image
+                    }
+                }
+            }
         }
         return cell
     }

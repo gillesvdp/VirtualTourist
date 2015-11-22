@@ -18,8 +18,11 @@ class CoreDataStackManager {
     
     let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
     
-    lazy var sharedContext: NSManagedObjectContext = {
+    lazy var sharedContext: NSManagedObjectContext? = {
         let coordinator = self.persistentStoreCoordinator
+        if coordinator == nil {
+            return nil
+        }
         var managedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
         managedObjectContext.persistentStoreCoordinator = coordinator
         return managedObjectContext
@@ -36,22 +39,32 @@ class CoreDataStackManager {
     }()
     
     lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator? = {
-        let coordinator: NSPersistentStoreCoordinator? = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent(SQLITE_FILE_NAME)
-        
+        var coordinator: NSPersistentStoreCoordinator? = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
+        let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("VirtualTourist.sqlite")
+        var error: NSError? = nil
+        var failureReason = "There was an error creating or loading the application's saved data."
         do {
             try coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil)
+            if coordinator == nil {
+                coordinator = nil
+                // Report any error we got.
+                var dict = [String: AnyObject]()
+                dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
+                dict[NSLocalizedFailureReasonErrorKey] = failureReason
+                dict[NSUnderlyingErrorKey] = error
+                error = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
+                print(error)
+            }
         } catch {
             print(error)
         }
-        
         return coordinator
     }()
     
     func saveContext () {
-        if sharedContext.hasChanges {
+        if sharedContext!.hasChanges {
             do {
-                try sharedContext.save()
+                try sharedContext!.save()
             } catch {
                 print(error)
             }
@@ -66,7 +79,7 @@ class CoreDataStackManager {
         request.returnsObjectsAsFaults = false
         
         do {
-            let results = try sharedContext.executeFetchRequest(request) as! [Pin]
+            let results = try sharedContext!.executeFetchRequest(request) as! [Pin]
             funcReturn = results
         } catch {
             print("error")
@@ -75,7 +88,7 @@ class CoreDataStackManager {
     }
     
     func saveNewPin(newPinLongitude: Double, newPinLatitude: Double) -> Pin {
-        let newPin = Pin(lon: newPinLongitude, lat: newPinLatitude, photoSet: [], context: sharedContext)
+        let newPin = Pin(lon: newPinLongitude, lat: newPinLatitude, photoSet: [], context: sharedContext!)
         saveContext()
         return newPin
     }
@@ -83,10 +96,10 @@ class CoreDataStackManager {
     func downloadAndSavePhotos(selectedPin: Pin, photoUrlArray: [String]) {
         // Saving the photoWebUrl in CoreData
         for webUrl in photoUrlArray {
-            let newPhoto = Photo(uniqueId: "", localUrl: "", webUrl: webUrl, context: self.sharedContext)
+            let newPhoto = Photo(uniqueId: "", localUrl: "", webUrl: webUrl, context: self.sharedContext!)
             newPhoto.pin = selectedPin
         }
-        self.saveContext()
+        saveContext()
         
         // Start downloading images
         ConstantStrings.sharedInstance.downloadingStatus = true
@@ -94,24 +107,23 @@ class CoreDataStackManager {
         ConstantStrings.sharedInstance.totalImagesToDownload = selectedPin.photos!.count
         for photo in selectedPin.photos! {
             let photo = photo as! Photo
-            photo.downloadAndSaveImage(selectedPin)
-            
+            photo.downloadPhoto(selectedPin)
             
             ConstantStrings.sharedInstance.imagesDownloaded += 1
             NSNotificationCenter.defaultCenter().postNotificationName("downloadedOnePhoto", object: self)
+            saveContext()
         }
         ConstantStrings.sharedInstance.downloadingStatus = false
         ConstantStrings.sharedInstance.imagesDownloaded = 0
         ConstantStrings.sharedInstance.totalImagesToDownload = 0
         NSNotificationCenter.defaultCenter().postNotificationName("finishedDownloadingPhotos", object: self)
-        self.saveContext()
     }
     
     //// Functions for PhotoAlbum
     func deletePhotosOfPin(selectedPin: Pin) {
         for photo in selectedPin.photos! {
             if let photo = photo as? Photo {
-                CoreDataStackManager.sharedInstance.sharedContext.deleteObject(photo)
+                CoreDataStackManager.sharedInstance.sharedContext!.deleteObject(photo)
             }
         }
         CoreDataStackManager.sharedInstance.saveContext()

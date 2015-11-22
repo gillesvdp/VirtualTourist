@@ -27,7 +27,6 @@ class Pin: NSManagedObject {
     }
     
     init(lon: Double , lat: Double, photoSet: NSOrderedSet, context: NSManagedObjectContext) {
-        
         let entity =  NSEntityDescription.entityForName("Pin", inManagedObjectContext: context)!
         super.init(entity: entity,insertIntoManagedObjectContext: context)
         

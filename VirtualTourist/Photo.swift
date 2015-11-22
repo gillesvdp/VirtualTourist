@@ -10,7 +10,6 @@ import Foundation
 import CoreData
 import UIKit
 
-
 class Photo: NSManagedObject {
     
     @NSManaged var photoUniqueId: String?
@@ -39,29 +38,25 @@ class Photo: NSManagedObject {
         photoWebUrl = webUrl
     }
     
-    func downloadAndSaveImage(selectedPin: Pin) {
+    func downloadPhoto(selectedPin: Pin) {
         // Downloading image
         let photo = self
         let image = UIImage(data: NSData(contentsOfURL: NSURL(string: photo.photoWebUrl!)!)!)
         
         // Storing the image locally
-        let fileManager = NSFileManager.defaultManager()
-        let docsDir = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first! as NSURL
         let unique = NSDate.timeIntervalSinceReferenceDate()
-        let photoLocalUrl = docsDir.URLByAppendingPathComponent("\(unique).jpg").path!
+        let photoLocalUrl = "\(unique).jpg"
         let imageJpg = UIImageJPEGRepresentation(image!, 1.0)
-        imageJpg?.writeToFile(photoLocalUrl, atomically: true)
         
-        // Storing the image localUrl in CoreData
-        photo.photoLocalUrl = photoLocalUrl
         photo.photoUniqueId = "\(unique)"
-        
+        photo.photoLocalUrl = photoLocalUrl        
+        imageJpg!.writeToFile(completeLocalUrl()!, atomically:  true)
     }
     
     override func prepareForDeletion() {
         // Delete from Disk, before being removed from CoreData
         let fileManager = NSFileManager.defaultManager()
-        let path = self.photoLocalUrl
+        let path = self.completeLocalUrl()
         do {
             try fileManager.removeItemAtPath(path!)
         } catch {
@@ -69,4 +64,9 @@ class Photo: NSManagedObject {
         }
     }
     
+    func completeLocalUrl() -> String? {
+        let documentsDirectoryURL: NSURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first! as NSURL
+        let fullURL = documentsDirectoryURL.URLByAppendingPathComponent(photoLocalUrl!)
+        return fullURL.path
+    }
 }

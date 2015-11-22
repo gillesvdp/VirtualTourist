@@ -66,7 +66,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                 let selectedPinLongitude = (selectedPin.annotation?.coordinate.longitude)!
                 let selectedPinLatitude = (selectedPin.annotation?.coordinate.latitude)!
                 let arrayOfExistingPins = CoreDataStackManager.sharedInstance.fetchPins() as [Pin]
-                print(arrayOfExistingPins.count)
                 for pin in arrayOfExistingPins {
                     if pin.latitude == selectedPinLatitude && pin.longitude == selectedPinLongitude {
                         destinationVC.selectedPin = pin
@@ -81,7 +80,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         mapView.delegate = self
         
         let arrayOfExistingPins = CoreDataStackManager.sharedInstance.fetchPins()
-        print("There are \(arrayOfExistingPins.count) annotations")
         
         // Transforming Pins into MKAnnotations.
         var arrayOfAnnotations = [MKAnnotation]()
@@ -113,6 +111,5 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                 CoreDataStackManager.sharedInstance.downloadAndSavePhotos(selectedPin, photoUrlArray: photoUrlArray!)
         })
     }
-    
 }
 
