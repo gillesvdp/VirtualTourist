@@ -10,55 +10,79 @@ import Foundation
 
 class FlickrAPI : NSObject {
     
-    func getPhotos(pinLatitude: Double, pinLongitude: Double,
+    func getPhotos(pinLatitude: Double, pinLongitude: Double, pageNumber: Int?,
         completionHandler: (photoUrlArray: [String]?, errorString: String?) -> Void) {
             
-        let latitude = pinLatitude
-        let longitude = pinLongitude
-        let bbox = createBoundingBoxString(latitude, longitude: longitude)
+            let bbox = createBoundingBoxString(pinLatitude, longitude: pinLongitude)
             
-        let flickrSearchUrl = "\(ConstantStrings.sharedInstance.flickrUrl)&api_key=\(ConstantStrings.sharedInstance.flickrApiKey)&bbox=\(bbox)&format=json&nojsoncallback=1&per_page=20"
+            var selectedPage = Int()
+            var flickrSearchUrl = String()
             
-        let request = NSMutableURLRequest(URL: NSURL(string: flickrSearchUrl)!)
-            
-        let session = NSURLSession.sharedSession()
-            
-        let task = session.dataTaskWithRequest(request) {
-            data, response, error in
-            
-            guard (error == nil) else {
-                completionHandler(photoUrlArray: nil, errorString: "Connection error")
-                return
+            if pageNumber == nil {
+                // We will use this Url to get the number of pages available.
+                flickrSearchUrl = "\(ConstantStrings.sharedInstance.flickrUrl)&api_key=\(ConstantStrings.sharedInstance.flickrApiKey)&bbox=\(bbox)&format=json&nojsoncallback=1&per_page=50"
+            } else {
+                // We will specify which page to access in the api url request.
+                selectedPage = pageNumber!
+                flickrSearchUrl = "\(ConstantStrings.sharedInstance.flickrUrl)&api_key=\(ConstantStrings.sharedInstance.flickrApiKey)&bbox=\(bbox)&format=json&nojsoncallback=1&page=\(selectedPage)&per_page=50"
             }
             
-            let parsedResult : [String: AnyObject]?
-            
-            do {
-                parsedResult = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? [String : AnyObject]
+            let request = NSMutableURLRequest(URL: NSURL(string: flickrSearchUrl)!)
+            let session = NSURLSession.sharedSession()
+            let task = session.dataTaskWithRequest(request) {
+                data, response, error in
                 
-                let photoDictionary = parsedResult!["photos"]!["photo"] as! NSArray
-                var photoUrlArray = [String]()
-                var x = 0
-                
-                for _ in photoDictionary {
-                    let farm = parsedResult!["photos"]!["photo"]!![x]["farm"] as! NSNumber
-                    let server = parsedResult!["photos"]!["photo"]!![x]["server"] as! String
-                    let id = parsedResult!["photos"]!["photo"]!![x]["id"] as! String
-                    let secret = parsedResult!["photos"]!["photo"]!![x]["secret"] as! String
-                    x += 1
-                    photoUrlArray.append(self.getPhotoURL(id, farm: farm, server: server, secret: secret))
+                guard (error == nil) else {
+                    completionHandler(photoUrlArray: nil, errorString: "Connection error")
+                    return
                 }
-                completionHandler(photoUrlArray: photoUrlArray, errorString: nil)
                 
-            } catch {
-                parsedResult = nil
-                print("Try again of contact our team")
-                completionHandler(photoUrlArray: nil, errorString: "Try again or contact our team")
+                let parsedResult : [String: AnyObject]?
+                
+                do {
+                    parsedResult = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? [String : AnyObject]
+                    
+                    if pageNumber == nil {
+                        // First call of the function (#1)
+                        // The function was just called, so no pageNumber was supplied. We will parse the total number of pages, and choose a random pageNumber based on the FlickrAPI constraints (max page 40 is accessible).
+                        let numberOfPages = parsedResult!["photos"]!["pages"] as! Int
+                        let pageLimit = min(numberOfPages, 40)
+                        let randomPageNumber = Int(arc4random_uniform(UInt32(pageLimit))) + 1
+                        
+                        // Calling the function again, this time specifying which page to access in the JSON result.
+                        self.getPhotos(pinLatitude, pinLongitude: pinLongitude, pageNumber: randomPageNumber,
+                            completionHandler: {(photoUrlArray, errorString) -> Void in
+                                guard errorString == nil else {
+                                    print(errorString)
+                                    return
+                                }
+                                // #2 has finished its work, and sent us back the photoUrlArray (or error)
+                                completionHandler(photoUrlArray: photoUrlArray, errorString: nil)
+                        })
+                        
+                    } else {
+                        // Secund call of the function (#2)
+                        // We are accessing a selected page, and creating the urlArray for all the images on the page.
+                        let photoDictionary = parsedResult!["photos"]!["photo"] as! NSArray
+                        var photoUrlArray = [String]()
+                        var x = 0
+                        
+                        for _ in photoDictionary {
+                            let farm = parsedResult!["photos"]!["photo"]!![x]["farm"] as! NSNumber
+                            let server = parsedResult!["photos"]!["photo"]!![x]["server"] as! String
+                            let id = parsedResult!["photos"]!["photo"]!![x]["id"] as! String
+                            let secret = parsedResult!["photos"]!["photo"]!![x]["secret"] as! String
+                            x += 1
+                            photoUrlArray.append(self.getPhotoURL(id, farm: farm, server: server, secret: secret))
+                        }
+                        // PhotoUrlArray is now complete, let's send it back to #1.
+                        completionHandler(photoUrlArray: photoUrlArray, errorString: nil)
+                    }
+                } catch {
+                    completionHandler(photoUrlArray: nil, errorString: "Error parsing the data")
+                }
             }
-            
-           
-        }
-        task.resume()
+            task.resume()
     }
     
     func createBoundingBoxString(latitude: Double, longitude: Double) -> String {
@@ -74,7 +98,6 @@ class FlickrAPI : NSObject {
         let top_right_lat = min(latitude + bounding_box_half_height, lat_max)
         return "\(bottom_left_lon),\(bottom_left_lat),\(top_right_lon),\(top_right_lat)"
     }
-    
     
     func getPhotoURL(id: String, farm: NSNumber, server: String, secret: String) -> String {
         return "https://farm\(farm).staticflickr.com/\(server)/\(id)_\(secret).jpg"

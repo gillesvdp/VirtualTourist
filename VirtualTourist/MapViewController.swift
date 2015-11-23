@@ -102,7 +102,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
     
     func downloadPhotos(selectedPin: Pin) {
-        flickrApi.getPhotos(selectedPin.latitude as! Double, pinLongitude: selectedPin.longitude as! Double,
+        flickrApi.getPhotos(selectedPin.latitude as! Double, pinLongitude: selectedPin.longitude as! Double, pageNumber: nil,
             completionHandler: {(photoUrlArray, errorString) -> Void in
                 guard errorString == nil else {
                     print(errorString)
