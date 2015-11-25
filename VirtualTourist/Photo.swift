@@ -30,13 +30,13 @@ class Photo: NSManagedObject {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
     }
     
-    init(uniqueId: String, localUrl: String , webUrl: String, context: NSManagedObjectContext) {
+    init(webUrl: String, context: NSManagedObjectContext) {
         
         let entity =  NSEntityDescription.entityForName("Photo", inManagedObjectContext: context)!
         super.init(entity: entity,insertIntoManagedObjectContext: context)
         
-        photoUniqueId = uniqueId
-        photoLocalUrl = localUrl
+        photoUniqueId = "\(NSDate.timeIntervalSinceReferenceDate())"
+        photoLocalUrl = ""
         photoWebUrl = webUrl
     }
     
@@ -46,12 +46,8 @@ class Photo: NSManagedObject {
         let image = UIImage(data: NSData(contentsOfURL: NSURL(string: photo.photoWebUrl!)!)!)
         
         // Storing the image locally
-        let unique = NSDate.timeIntervalSinceReferenceDate()
-        let photoLocalUrl = "\(unique).jpg"
         let imageJpg = UIImageJPEGRepresentation(image!, 1.0)
-        
-        photo.photoUniqueId = "\(unique)"
-        photo.photoLocalUrl = photoLocalUrl        
+        photo.photoLocalUrl = "\(photo.photoUniqueId).jpg"
         imageJpg!.writeToFile(completeLocalUrl()!, atomically:  true)
         
         loadUpdateHandler?()

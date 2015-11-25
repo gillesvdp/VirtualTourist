@@ -96,7 +96,7 @@ class CoreDataStackManager {
     func downloadAndSavePhotos(selectedPin: Pin, photoUrlArray: [String]) {
         // Saving the photoWebUrl in CoreData
         for webUrl in photoUrlArray {
-            let newPhoto = Photo(uniqueId: "", localUrl: "", webUrl: webUrl, context: self.sharedContext!)
+            let newPhoto = Photo(webUrl: webUrl, context: self.sharedContext!)
             newPhoto.pin = selectedPin
         }
         saveContext()

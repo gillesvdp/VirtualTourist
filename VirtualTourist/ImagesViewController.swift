@@ -190,7 +190,7 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
         let fetchRequest = NSFetchRequest(entityName: "Photo")
         
         // Add a sort descriptor.
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "photoUniqueId", ascending: false)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "photoUniqueId", ascending: true)]
         fetchRequest.predicate = NSPredicate(format: "pin == %@", self.selectedPin);
         
         // Create the Fetched Results Controller
@@ -203,7 +203,6 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
         // Return the fetched results controller. It will be the value of the lazy variable
         return fetchedResultsController
     } ()
-    
     
     //// CollectionView Management
     
