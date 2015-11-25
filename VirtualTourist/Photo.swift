@@ -17,6 +17,8 @@ class Photo: NSManagedObject {
     @NSManaged var photoWebUrl: String?
     @NSManaged var pin: Pin?
 
+    var loadUpdateHandler: (() -> Void)?
+    
     struct Keys {
         static let photoUniqueId = "photoUniqueId"
         static let photoLocalUrl = "photoLocalUrl"
@@ -51,6 +53,8 @@ class Photo: NSManagedObject {
         photo.photoUniqueId = "\(unique)"
         photo.photoLocalUrl = photoLocalUrl        
         imageJpg!.writeToFile(completeLocalUrl()!, atomically:  true)
+        
+        loadUpdateHandler?()
     }
     
     override func prepareForDeletion() {

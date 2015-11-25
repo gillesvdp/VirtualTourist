@@ -17,13 +17,13 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
     var selectedPin : Pin!
     var downloadingPictures : Bool!
     
+    
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     @IBOutlet weak var bottomBtnOutlet: UIBarButtonItem!
     
     
     //// View Management
-    
     @IBAction func bottomBtnPressed(sender: AnyObject) {
         bottomBtnOutlet.enabled = false
         self.bottomBtnOutlet.title = "Select a photo to be deleted"
@@ -41,7 +41,6 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
         for photo in photosToDelete {
             sharedContext.deleteObject(photo)
         }
-        
         selectedIndexes = [NSIndexPath]()
         CoreDataStackManager.sharedInstance.saveContext()
     }
@@ -128,9 +127,7 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
         selectedIndexes = [NSIndexPath]()
     }
     
-    
     //// NSFetchedResultsController
-    
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
         insertedIndexPaths = [NSIndexPath]()
         deletedIndexPaths = [NSIndexPath]()
@@ -208,7 +205,6 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
     } ()
     
     
-    
     //// CollectionView Management
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -222,7 +218,13 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
         
         if photo.photoLocalUrl == "" {
             cell.imageView.image = UIImage(named: "downloading")
+            photo.loadUpdateHandler = { [unowned self] () -> Void in
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.collectionView.reloadItemsAtIndexPaths([indexPath])
+                })
+            }
         } else {
+            photo.loadUpdateHandler = nil
             if let completeLocalUrl = photo.completeLocalUrl() {
                 if let imageData = NSData(contentsOfFile: completeLocalUrl) {
                     if let image = UIImage(data: imageData) {
