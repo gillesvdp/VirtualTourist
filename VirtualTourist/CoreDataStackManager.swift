@@ -61,12 +61,14 @@ class CoreDataStackManager {
         return coordinator
     }()
     
-    func saveContext () {
-        if sharedContext!.hasChanges {
-            do {
-                try sharedContext!.save()
-            } catch {
-                print(error)
+    func saveContext() {
+        if let _ = sharedContext {
+            if sharedContext!.hasChanges {
+                do {
+                    try sharedContext!.save()
+                } catch {
+                    print(error)
+                }
             }
         }
     }

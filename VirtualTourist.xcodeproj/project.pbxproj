@@ -20,6 +20,11 @@
 		988737281BFC9AB600ED09FB /* CoreDataStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988737271BFC9AB600ED09FB /* CoreDataStackManager.swift */; };
 		9887376B1BFD375300ED09FB /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9887376A1BFD375300ED09FB /* MapKit.framework */; };
 		9887376D1BFD375A00ED09FB /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9887376C1BFD375A00ED09FB /* CoreData.framework */; };
+		98A7EFDE1C0F2AE500A94EDB /* MapCustomPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A7EFDD1C0F2AE500A94EDB /* MapCustomPin.swift */; };
+		98A7EFE01C0F2E2900A94EDB /* MapViewExtensionLifeCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A7EFDF1C0F2E2900A94EDB /* MapViewExtensionLifeCycle.swift */; };
+		98A7EFE21C0F31D000A94EDB /* ImagesViewExtensionLifeCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A7EFE11C0F31D000A94EDB /* ImagesViewExtensionLifeCycle.swift */; };
+		98A7EFE41C0F572C00A94EDB /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A7EFE31C0F572C00A94EDB /* DetailsViewController.swift */; };
+		98A7EFE61C0F5A9D00A94EDB /* ImagesViewExtensionCollectionFuncs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A7EFE51C0F5A9D00A94EDB /* ImagesViewExtensionCollectionFuncs.swift */; };
 		98B772FA1C00D62300BC37E3 /* ImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B772F91C00D62300BC37E3 /* ImagesViewController.swift */; };
 		98B772FC1C00D94F00BC37E3 /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B772FB1C00D94F00BC37E3 /* ImageCell.swift */; };
 		98DF60D41BFE034A0023B372 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98DF60D01BFE034A0023B372 /* Photo.swift */; };
@@ -63,6 +68,11 @@
 		988737271BFC9AB600ED09FB /* CoreDataStackManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStackManager.swift; sourceTree = "<group>"; };
 		9887376A1BFD375300ED09FB /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		9887376C1BFD375A00ED09FB /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		98A7EFDD1C0F2AE500A94EDB /* MapCustomPin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapCustomPin.swift; sourceTree = "<group>"; };
+		98A7EFDF1C0F2E2900A94EDB /* MapViewExtensionLifeCycle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewExtensionLifeCycle.swift; sourceTree = "<group>"; };
+		98A7EFE11C0F31D000A94EDB /* ImagesViewExtensionLifeCycle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagesViewExtensionLifeCycle.swift; sourceTree = "<group>"; };
+		98A7EFE31C0F572C00A94EDB /* DetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
+		98A7EFE51C0F5A9D00A94EDB /* ImagesViewExtensionCollectionFuncs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagesViewExtensionCollectionFuncs.swift; sourceTree = "<group>"; };
 		98B772F91C00D62300BC37E3 /* ImagesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagesViewController.swift; sourceTree = "<group>"; };
 		98B772FB1C00D94F00BC37E3 /* ImageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCell.swift; sourceTree = "<group>"; };
 		98DF60D01BFE034A0023B372 /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
@@ -156,8 +166,13 @@
 			isa = PBXGroup;
 			children = (
 				9868FBCD1BF3F62A00710F68 /* MapViewController.swift */,
+				98A7EFDF1C0F2E2900A94EDB /* MapViewExtensionLifeCycle.swift */,
+				98A7EFDD1C0F2AE500A94EDB /* MapCustomPin.swift */,
 				98B772F91C00D62300BC37E3 /* ImagesViewController.swift */,
+				98A7EFE51C0F5A9D00A94EDB /* ImagesViewExtensionCollectionFuncs.swift */,
+				98A7EFE11C0F31D000A94EDB /* ImagesViewExtensionLifeCycle.swift */,
 				98B772FB1C00D94F00BC37E3 /* ImageCell.swift */,
+				98A7EFE31C0F572C00A94EDB /* DetailsViewController.swift */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -313,15 +328,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				9868FC021BF3F8EF00710F68 /* ConstantStrings.swift in Sources */,
+				98A7EFE21C0F31D000A94EDB /* ImagesViewExtensionLifeCycle.swift in Sources */,
 				9868FBCE1BF3F62A00710F68 /* MapViewController.swift in Sources */,
 				988737281BFC9AB600ED09FB /* CoreDataStackManager.swift in Sources */,
 				98B772FA1C00D62300BC37E3 /* ImagesViewController.swift in Sources */,
+				98A7EFE01C0F2E2900A94EDB /* MapViewExtensionLifeCycle.swift in Sources */,
 				98DF60D61BFE034A0023B372 /* Pin.swift in Sources */,
 				98B772FC1C00D94F00BC37E3 /* ImageCell.swift in Sources */,
+				98A7EFDE1C0F2AE500A94EDB /* MapCustomPin.swift in Sources */,
 				9868FBCC1BF3F62A00710F68 /* AppDelegate.swift in Sources */,
 				98DF60D41BFE034A0023B372 /* Photo.swift in Sources */,
 				9868FC041BF3FBB800710F68 /* FlickrAPI.swift in Sources */,
+				98A7EFE61C0F5A9D00A94EDB /* ImagesViewExtensionCollectionFuncs.swift in Sources */,
 				9868FBD41BF3F62A00710F68 /* VirtualTourist.xcdatamodeld in Sources */,
+				98A7EFE41C0F572C00A94EDB /* DetailsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
