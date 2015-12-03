@@ -43,8 +43,8 @@ extension ImagesViewController {
         deleteInstructionLabel.hidden = true
         
         // Set region of the mapView
-        let lat = selectedPin!.latitude as! Double
-        let long = selectedPin!.longitude as! Double
+        let lat = selectedPin!.latitude
+        let long = selectedPin!.longitude
         let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
         let annotation = MKPointAnnotation()
         annotation.coordinate = coordinate

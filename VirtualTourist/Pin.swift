@@ -12,9 +12,9 @@ import CoreData
 
 class Pin: NSManagedObject {
 
-    @NSManaged var latitude: NSNumber?
-    @NSManaged var longitude: NSNumber?
-    @NSManaged var photos: NSOrderedSet?
+    @NSManaged var latitude: Double
+    @NSManaged var longitude: Double
+    @NSManaged var photos: [Photo]?
 
     struct Keys {
         static let longitude = "longitude"
@@ -26,13 +26,12 @@ class Pin: NSManagedObject {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
     }
     
-    init(lon: Double , lat: Double, photoSet: NSOrderedSet, context: NSManagedObjectContext) {
+    init(lon: Double , lat: Double, context: NSManagedObjectContext) {
         let entity =  NSEntityDescription.entityForName("Pin", inManagedObjectContext: context)!
         super.init(entity: entity,insertIntoManagedObjectContext: context)
         
         longitude = lon
         latitude = lat
-        photos = photoSet
     }
     
 }

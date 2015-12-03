@@ -90,7 +90,7 @@ class CoreDataStackManager {
     }
     
     func saveNewPin(newPinLongitude: Double, newPinLatitude: Double) -> Pin {
-        let newPin = Pin(lon: newPinLongitude, lat: newPinLatitude, photoSet: [], context: sharedContext!)
+        let newPin = Pin(lon: newPinLongitude, lat: newPinLatitude, context: sharedContext!)
         saveContext()
         return newPin
     }
@@ -108,7 +108,6 @@ class CoreDataStackManager {
         ConstantStrings.sharedInstance.imagesDownloaded = 0
         ConstantStrings.sharedInstance.totalImagesToDownload = selectedPin.photos!.count
         for photo in selectedPin.photos! {
-            let photo = photo as! Photo
             photo.downloadPhoto(selectedPin)
             
             ConstantStrings.sharedInstance.imagesDownloaded += 1
@@ -124,9 +123,7 @@ class CoreDataStackManager {
     //// Functions for PhotoAlbum
     func deletePhotosOfPin(selectedPin: Pin) {
         for photo in selectedPin.photos! {
-            if let photo = photo as? Photo {
-                CoreDataStackManager.sharedInstance.sharedContext!.deleteObject(photo)
-            }
+            CoreDataStackManager.sharedInstance.sharedContext!.deleteObject(photo)
         }
         CoreDataStackManager.sharedInstance.saveContext()
     }

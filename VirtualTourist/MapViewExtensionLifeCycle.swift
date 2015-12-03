@@ -11,25 +11,20 @@ import MapKit
 
 extension MapViewController {
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
     }
     
-    
-    
     override func viewWillAppear(animated: Bool) {
         longPressOutlet.enabled = true
         
         let arrayOfExistingPins = CoreDataStackManager.sharedInstance.fetchPins()
-        
-        // Transforming Pins into MKAnnotations.
         var arrayOfAnnotations = [MKAnnotation]()
         if arrayOfExistingPins.count > 0 {
             for pin in arrayOfExistingPins {
-                let lat = pin.latitude as! Double
-                let long = pin.longitude as! Double
+                let lat = pin.latitude 
+                let long = pin.longitude
                 let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
                 let annotation = MapCustomPin()
                 annotation.coordinate = coordinate
@@ -54,9 +49,6 @@ extension MapViewController {
         }
     }
     
-    
-    
-    
     override func viewWillDisappear(animated: Bool) {
         defaults.setValue([
             "latitude" : mapView.region.center.latitude,
@@ -66,6 +58,4 @@ extension MapViewController {
             ],
             forKey: "mapViewRegion")
     }
-    
-    
 }

@@ -12,17 +12,17 @@ import UIKit
 
 class Photo: NSManagedObject {
     
-    @NSManaged var photoUniqueId: String?
-    @NSManaged var photoLocalUrl: String?
-    @NSManaged var photoWebUrl: String?
-    @NSManaged var pin: Pin?
+    @NSManaged var id: String
+    @NSManaged var webUrl: String
+    @NSManaged var localUrl: String?
+    @NSManaged var pin: Pin
 
     var loadUpdateHandler: (() -> Void)?
     
     struct Keys {
-        static let photoUniqueId = "photoUniqueId"
-        static let photoLocalUrl = "photoLocalUrl"
-        static let photoWebUrl = "photoWebUrl"
+        static let id = "id"
+        static let webUrl = "webUrl"
+        static let localUrl = "localUrl"
         static let pin = "pin"
     }
     
@@ -35,19 +35,18 @@ class Photo: NSManagedObject {
         let entity =  NSEntityDescription.entityForName("Photo", inManagedObjectContext: context)!
         super.init(entity: entity,insertIntoManagedObjectContext: context)
         
-        photoUniqueId = "\(NSDate.timeIntervalSinceReferenceDate())"
-        photoLocalUrl = ""
-        photoWebUrl = webUrl
+        self.id = "\(NSDate.timeIntervalSinceReferenceDate())"
+        self.webUrl = webUrl
     }
     
     func downloadPhoto(selectedPin: Pin) {
-        // Downloading image
+        // Download the image
         let photo = self
-        let image = UIImage(data: NSData(contentsOfURL: NSURL(string: photo.photoWebUrl!)!)!)
+        let image = UIImage(data: NSData(contentsOfURL: NSURL(string: photo.webUrl)!)!)
         
         // Storing the image locally
         let imageJpg = UIImageJPEGRepresentation(image!, 1.0)
-        photo.photoLocalUrl = "\(photo.photoUniqueId).jpg"
+        photo.localUrl = "\(self.id).jpg"
         imageJpg!.writeToFile(completeLocalUrl()!, atomically:  true)
         
         loadUpdateHandler?()
@@ -55,18 +54,23 @@ class Photo: NSManagedObject {
     
     override func prepareForDeletion() {
         // Delete from Disk, before being removed from CoreData
-        let fileManager = NSFileManager.defaultManager()
-        let path = self.completeLocalUrl()
-        do {
-            try fileManager.removeItemAtPath(path!)
-        } catch {
-            print(error)
+        if let path = self.completeLocalUrl() {
+            let fileManager = NSFileManager.defaultManager()
+            do {
+                try fileManager.removeItemAtPath(path)
+            } catch {
+                print(error)
+            }
         }
     }
     
     func completeLocalUrl() -> String? {
-        let documentsDirectoryURL: NSURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first! as NSURL
-        let fullURL = documentsDirectoryURL.URLByAppendingPathComponent(photoLocalUrl!)
-        return fullURL.path
+        var funcReturn : String?
+        if let _ = self.localUrl {
+            let documentsDirectoryURL: NSURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first! as NSURL
+            let fullURL = documentsDirectoryURL.URLByAppendingPathComponent(localUrl!)
+            funcReturn = fullURL.path
+        }
+        return funcReturn
     }
 }

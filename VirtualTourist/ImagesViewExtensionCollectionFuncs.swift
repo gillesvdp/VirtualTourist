@@ -21,7 +21,7 @@ extension ImagesViewController {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! ImageCell
         cell.photo = photo
         
-        if photo.photoLocalUrl == "" {
+        if photo.localUrl == nil {
             cell.imageView.image = UIImage(named: "downloading")
             photo.loadUpdateHandler = { [unowned self] () -> Void in
                 dispatch_async(dispatch_get_main_queue(), {

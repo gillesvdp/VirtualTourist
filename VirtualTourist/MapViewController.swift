@@ -13,12 +13,9 @@ import CoreData
 
 class MapViewController: UIViewController, MKMapViewDelegate {
 
-    // MARK: Variables
+    // MARK: Variables & IB Outlets
     let defaults = NSUserDefaults()
     let flickrApi = FlickrAPI()
-    var selectedPin: Pin?
-    
-    // MARK: IBOutlets
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet var longPressOutlet: UILongPressGestureRecognizer!
     
@@ -61,11 +58,10 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
     
     
-    
     // MARK: General functions
     
     func downloadPhotos(selectedPin: Pin) {
-        flickrApi.getPhotos(selectedPin.latitude as! Double, pinLongitude: selectedPin.longitude as! Double, pageNumber: nil,
+        flickrApi.getPhotos(selectedPin.latitude, pinLongitude: selectedPin.longitude, pageNumber: nil,
             completionHandler: {(photoUrlArray, errorString) -> Void in
                 guard errorString == nil else {
                     print(errorString)
@@ -75,6 +71,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         })
     }
     
+    var selectedPin: Pin?
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == ConstantStrings.sharedInstance.showImageCollection {
             let destinationVC = segue.destinationViewController as! ImagesViewController

@@ -16,12 +16,14 @@ class DetailsViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         if let _ = photo {
-            if let completeLocalUrl = photo!.completeLocalUrl() {
-                if let imageData = NSData(contentsOfFile: completeLocalUrl) {
+            if let localUrl = photo!.completeLocalUrl() {
+                if let imageData = NSData(contentsOfFile: localUrl) {
                     if let image = UIImage(data: imageData) {
                         imageView.image = image
                     }
                 }
+            } else {
+                imageView.image = UIImage(named: "downloading")
             }
         }
     }

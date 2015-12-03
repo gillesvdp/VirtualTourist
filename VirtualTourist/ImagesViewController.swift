@@ -27,7 +27,117 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
         replacePhotos()
     }
     
+    
+    
+    
+    // Photos management
+    
+    func downloadPhotos() {
+        if let _ = selectedPin {
+            flickrApi.getPhotos(selectedPin!.latitude , pinLongitude: selectedPin!.longitude, pageNumber: nil,
+                completionHandler: {(photoUrlArray, errorString) -> Void in
+                    guard errorString == nil else {
+                        print(errorString)
+                        return
+                    }
+                    
+                    guard photoUrlArray!.count > 0 else {
+                        self.showAlertViewController("Error", errorMessage: "No images could be found near this location.")
+                        return
+                    }
+                    
+                    CoreDataStackManager.sharedInstance.downloadAndSavePhotos(self.selectedPin!, photoUrlArray: photoUrlArray!)
+            })
+        }
+    }
+    
+    func replacePhotos() {
+        let alert = UIAlertController(title: "Refresh Photo Collection", message: "WARNING: Refreshing the collection with new photos from Flickr will delete the current set of photos associated with this Pin.", preferredStyle: .Alert)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+        alert.addAction(cancelAction)
+        
+        let okAction = UIAlertAction(title: "OK, download new photos", style: .Destructive, handler: {
+            UIAlertAction -> Void in
+            
+            // In case we are currently in edit mode, reset the screen into normal mode
+            if let btn = self.navigationItem.rightBarButtonItem {
+                if btn.title == "Done" {
+                    btn.title = "Edit"
+                    self.deleteInstructionLabel.hidden = true
+                }
+            }
+            
+            self.bottomBtnOutlet.enabled = false
+            self.deleteAllPhotos()
+            self.downloadPhotos()
+        })
+        alert.addAction(okAction)
+        presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    func deleteAllPhotos() {
+        for photo in fetchedResultsController.fetchedObjects as! [Photo] {
+            sharedContext.deleteObject(photo)
+        }
+        CoreDataStackManager.sharedInstance.saveContext()
+        selectedIndexes = [NSIndexPath]()
+    }
+    
+    func editBtnPressed(){
+        if self.navigationItem.rightBarButtonItem?.title == "Edit" {
+            self.navigationItem.rightBarButtonItem?.title = "Done"
+            deleteInstructionLabel.hidden = false
+        } else {
+            self.navigationItem.rightBarButtonItem?.title = "Edit"
+            deleteInstructionLabel.hidden = true
+        }
+    }
+    
+    func deleteSelectedPhoto() {
+        var photosToDelete = [Photo]()
+        for indexPath in selectedIndexes {
+            photosToDelete.append(fetchedResultsController.objectAtIndexPath(indexPath) as! Photo)
+        }
+        
+        for indexPath in selectedIndexes {
+            let cell = collectionView.cellForItemAtIndexPath(indexPath)
+            cell?.backgroundColor = UIColor.whiteColor()
+        }
+        
+        for photo in photosToDelete {
+            sharedContext.deleteObject(photo)
+        }
+        selectedIndexes = [NSIndexPath]()
+        CoreDataStackManager.sharedInstance.saveContext()
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "showDetails" {
+            let destinationVC = segue.destinationViewController as! DetailsViewController
+            let cell = sender as! ImageCell
+            destinationVC.photo = cell.photo
+            
+        }
+    }
+    
+    func showAlertViewController(title: String, errorMessage: String) {
+        let alert = UIAlertController(title: title, message: errorMessage, preferredStyle: .Alert)
+        let okAction = UIAlertAction(title: "Ok", style: .Cancel, handler: nil)
+        alert.addAction(okAction)
+        presentViewController(alert, animated: true, completion: nil)
+    }
+    
     //// NSFetchedResultsController
+    var selectedIndexes = [NSIndexPath]()
+    var insertedIndexPaths: [NSIndexPath]!
+    var deletedIndexPaths: [NSIndexPath]!
+    var updatedIndexPaths: [NSIndexPath]!
+    
+    lazy var sharedContext: NSManagedObjectContext = {
+        CoreDataStackManager.sharedInstance.sharedContext!
+    }()
+    
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
         insertedIndexPaths = [NSIndexPath]()
         deletedIndexPaths = [NSIndexPath]()
@@ -74,22 +184,13 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
             }, completion: nil)
     }
     
-    var selectedIndexes = [NSIndexPath]()
-    var insertedIndexPaths: [NSIndexPath]!
-    var deletedIndexPaths: [NSIndexPath]!
-    var updatedIndexPaths: [NSIndexPath]!
-    
-    lazy var sharedContext: NSManagedObjectContext = {
-        CoreDataStackManager.sharedInstance.sharedContext!
-    }()
-    
     // MARK: - Fetched Results Controller
     lazy var fetchedResultsController: NSFetchedResultsController = {
         // Create the fetch request
         let fetchRequest = NSFetchRequest(entityName: "Photo")
         
         // Add a sort descriptor.
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "photoUniqueId", ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
         fetchRequest.predicate = NSPredicate(format: "pin == %@", self.selectedPin!);
         
         // Create the Fetched Results Controller
@@ -102,108 +203,4 @@ class ImagesViewController: UIViewController, NSFetchedResultsControllerDelegate
         // Return the fetched results controller. It will be the value of the lazy variable
         return fetchedResultsController
     } ()
-    
-    
-    
-    
-    
-    
-    
-    // Photos management
-    
-    func downloadPhotos() {
-        if let _ = selectedPin {
-            flickrApi.getPhotos(selectedPin!.latitude as! Double, pinLongitude: selectedPin!.longitude as! Double, pageNumber: nil,
-                completionHandler: {(photoUrlArray, errorString) -> Void in
-                    guard errorString == nil else {
-                        print(errorString)
-                        return
-                    }
-                    
-                    guard photoUrlArray!.count > 0 else {
-                        self.showAlertViewController("Error", errorMessage: "No images could be found near this location.")
-                        return
-                    }
-                    
-                    CoreDataStackManager.sharedInstance.downloadAndSavePhotos(self.selectedPin!, photoUrlArray: photoUrlArray!)
-            })
-        }
-    }
-    
-    func deleteSelectedPhoto() {
-        var photosToDelete = [Photo]()
-        for indexPath in selectedIndexes {
-            photosToDelete.append(fetchedResultsController.objectAtIndexPath(indexPath) as! Photo)
-        }
-        
-        for indexPath in selectedIndexes {
-            let cell = collectionView.cellForItemAtIndexPath(indexPath)
-            cell?.backgroundColor = UIColor.whiteColor()
-        }
-        
-        for photo in photosToDelete {
-            sharedContext.deleteObject(photo)
-        }
-        selectedIndexes = [NSIndexPath]()
-        CoreDataStackManager.sharedInstance.saveContext()
-    }
-    
-    func replacePhotos() {
-        let alert = UIAlertController(title: "Refresh Photo Collection", message: "WARNING: Refreshing the collection with new photos from Flickr will delete the current set of photos associated with this Pin.", preferredStyle: .Alert)
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
-        alert.addAction(cancelAction)
-        
-        let okAction = UIAlertAction(title: "OK, download new photos", style: .Destructive, handler: {
-            UIAlertAction -> Void in
-            
-            // In case we are currently in edit mode, reset the screen into normal mode
-            if let btn = self.navigationItem.rightBarButtonItem {
-                if btn.title == "Done" {
-                    btn.title = "Edit"
-                    self.deleteInstructionLabel.hidden = true
-                }
-            }
-            
-            self.bottomBtnOutlet.enabled = false
-            self.deleteAllPhotos()
-            self.downloadPhotos()
-        })
-        alert.addAction(okAction)
-        presentViewController(alert, animated: true, completion: nil)
-    }
-    
-    func deleteAllPhotos() {
-        for photo in fetchedResultsController.fetchedObjects as! [Photo] {
-            sharedContext.deleteObject(photo)
-        }
-        CoreDataStackManager.sharedInstance.saveContext()
-        selectedIndexes = [NSIndexPath]()
-    }
-    
-    func editBtnPressed(){
-        if self.navigationItem.rightBarButtonItem?.title == "Edit" {
-            self.navigationItem.rightBarButtonItem?.title = "Done"
-            deleteInstructionLabel.hidden = false
-        } else {
-            self.navigationItem.rightBarButtonItem?.title = "Edit"
-            deleteInstructionLabel.hidden = true
-        }
-    }
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "showDetails" {
-            let destinationVC = segue.destinationViewController as! DetailsViewController
-            let cell = sender as! ImageCell
-            destinationVC.photo = cell.photo
-            
-        }
-    }
-    
-    func showAlertViewController(title: String, errorMessage: String) {
-        let alert = UIAlertController(title: title, message: errorMessage, preferredStyle: .Alert)
-        let okAction = UIAlertAction(title: "Ok", style: .Cancel, handler: nil)
-        alert.addAction(okAction)
-        presentViewController(alert, animated: true, completion: nil)
-    }
 }
